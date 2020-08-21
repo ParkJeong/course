@@ -13,8 +13,7 @@ public class Test02 {
 		int gap = endPoint - startPoint;
 		
 		for (int i = 0; i <= gap; i++) {
-			System.out.print(start);
-			start += 1;
+			System.out.print(start++);
 		}
 	}
 }
