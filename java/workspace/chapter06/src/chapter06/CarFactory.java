@@ -2,7 +2,6 @@ package chapter06;
 
 public class CarFactory {
 	private static CarFactory instance = new CarFactory();
-	private static int carId = 10001;
 	
 	private CarFactory () {}
 	
@@ -11,5 +10,10 @@ public class CarFactory {
 			instance = new CarFactory();
 		}
 		return instance;
+	}
+	
+	public static Car createCar() {
+		Car car = new Car();
+		return car;
 	}
 }
