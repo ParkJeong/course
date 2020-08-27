@@ -7,19 +7,20 @@ public class Customer {
 	int bonusPoint;
 	double bonusRatio;
 	
+	public Customer() {
+		initCustomer();
+	}
+	
 	public Customer(int customerID, String customerName) {
 		this.customerID = customerID;
 		this.customerName = customerName;
-		this.customerGrade = "SILVER";
-		this.bonusRatio = 0.01;
-		System.out.println("Customer(int, String) 생성자 호출");
+		initCustomer();
 	}
 	
-//	public Customer() {
-//		this.customerGrade = "SILVER";
-//		this.bonusRatio = 0.01;
-//		System.out.println("Customer() 생성자 호출");
-//	}
+	private void initCustomer() {
+		this.customerGrade = "SILVER";
+		this.bonusRatio = 0.01;
+	}
 	
 	public int getCustomerID() {
 		return customerID;

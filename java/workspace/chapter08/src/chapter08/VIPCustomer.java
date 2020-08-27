@@ -20,6 +20,9 @@ public class VIPCustomer extends Customer{
 		return price - (int)(price * this.saleRatio);
 	}
 	
+	public String showCusomerInfo() {
+		return super.showCustomerInfo() + "담당 상담원 번호는 " + this.agentID + "입니다.";
+	}
 	
 	public int getAgentID() {
 		return this.agentID;
