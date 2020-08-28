@@ -19,21 +19,43 @@ public class RandomSeat {
 	 */
 
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		Scanner scan = new Scanner(System.in);
 
 		System.out.println("배정할 좌석의 크기를 지정하세요>");
-		int number = scan.nextInt();
-		int[] seats = new int[number];
+		int size = scan.nextInt();
+		int[] seats = new int[size];
 		int count = 0;
 		int randomNum = 0;
 		boolean isFound;
 
-		for(int i = 0; i < number; i++) {
-			
+
+		//
+		start:while(true) {
+			if(count == size) break;
+
+			randomNum = (int)(Math.random() * size) + 1;
+
+			//중복검사
+			for(int i = 0; i < count; i++) {
+				if(seats[i] == randomNum) continue start;
+			}
+
+
+			seats[count] = randomNum;
+			count++;
+		}
+		System.out.println(Arrays.toString(seats));
+
+
+		//
+
+		count = 0;
+		for(int i = 0; i < size; i++) {
+
 			isFound = false;
 			while(!isFound) {
-				randomNum = (int)(Math.random()*number) + 1;
+				randomNum = (int)(Math.random()*size) + 1;
 				isFound = true;
 				for(int j = 0; j < count; j++) {
 					if(seats[j] == randomNum) {
@@ -45,32 +67,62 @@ public class RandomSeat {
 			seats[count] = randomNum;
 			count++;
 		}
+		
+		count = 0;
+		//
+		while(count != size) {
+			isFound = true;
+
+			randomNum = (int)(Math.random()*size) + 1;
+			for(int j = 0; j < count; j++) {
+				if(seats[j] == randomNum) {
+					isFound = false;
+					break;
+				}
+			}
+			if(isFound) {
+				seats[count] = randomNum;
+				count++;
+			}
+		}
+
+
+		//
+
+
 
 		System.out.println(Arrays.toString(seats));
 		int select;
 		while(true) {
 			System.out.println("----------------좌석 선택 프로그램---------------------");
 
-			for(int i = 0; i < number; i++) {
-				System.out.printf("%-3d ",i+1);
+			for(int i = 0; i < size; i++) {
+				System.out.printf("%-3d",i+1);
 			}
 			System.out.println();
 			for(int checked : seats) {
 				if(checked == -1) {
-					System.out.printf("%-4s", "●");
+					System.out.printf("%-3s", "●");
 				}
 				else {
-					System.out.printf("%-4s", "○");
+					System.out.printf("%-3s", "○");
 				}
 			}
 
 			System.out.println();
 			System.out.print("좌석 선택>");
 			select = scan.nextInt() - 1;
-			if(select >= number || select < 0) {
+			if(select >= size || select < 0) {
 				System.out.println("잘못된 입력입니다.");
 			}
 			else if(seats[select] != -1) {
+				// 쓰레드는 프로그램의 실행 흐름이다.
+				System.out.println("3");
+				Thread.sleep(300); // ms단위
+				System.out.println("2");
+				Thread.sleep(300);
+				System.out.println("1");
+				Thread.sleep(300);
 				System.out.println("선택한 좌석: " + seats[select]);
 				seats[select] = -1;
 			}
