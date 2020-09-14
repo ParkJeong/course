@@ -1,0 +1,189 @@
+오버로딩
+오버라이딩
+
+묵시적 형변환, 업캐스팅
+명시적 형병환, 다운캐스팅, instanceof
+
+가상메서드
+
+다형성
+
+Arrays.sort(arr1); // arr1을 정렬한다.
+Arrays.equals(arr1, arr2) // arr1과 arr2가 같은지 비교
+배열을 비교하기전에는 항상 정렬할 것
+
+추상클래스
+
+추상메서드
+
+템플릿메서드
+
+final예약어
+
+
+인터페이스, 다중 구현 가능, implements
+인터페이스는 다중 상속 가능
+
+정적메서드
+
+default 메서드
+
+
+기본 클래스 4개
+1.Object, 모든 자바의 최상위 클래스
+
+toString() 메서드 재정의
+
+equals() 메서드 재정의
+
+hashCode() 메서드 재정의
+
+clone() 메서드
+
+hashCode() 메서드만 재정의하면 equals()메서드는 재정의할 필요 없는 것 아닌가??? 아니다. hashCode()를 재정의한다고 물리적 위치(메모리 주소)가 같아지는 것이 아니다.
+
+
+2.String 클래스
+
+String을 선언하는 두 가지 방법
+
+상수 풀(constant pool) 프로그램에서 사용되는 상수 값을 저장하는 공간
+
+String str3 = str1.concat(str2);
+
+StringBuffer 와 StringBuilder
+
+
+3.Wrapper 클래스
+기본 자료형처럼 쓸 수 있는 클래스
+오토박싱, 언박싱
+
+
+4.Class 클래스
+클래스 정보를 가져오는 방법 세 가지
+리플렉션
+
+Class.forName("클래스 전체이름")을 사용해 동적 로딩
+
+
+------------------------------------------------------------------
+자바는 컴파일이 되고 나면 class 파일로 생성된다.
+이 class 파일에는 클래스나 인터페이스에 대한 변수, 메서드, 생성자 등의 정보가 들어 있다. Class 클래스는 컴파일된 class 파일에 저장된 클래스나 인터페이스 정보를 가져오는 데 사용한다.
+
+클래스 정보를 가져오는 방법 세 가지
+1. Object 클래스의 getClass() 메서드 사용하기
+String s = new String();
+Class c = s.getClass();
+
+2. 클래스 파일 이름을 Class 변수에 직접 대입하기
+Class c = String.Class;
+
+3. Class.forName("클래스 이름")메서드 사용하기
+Class c = Class.forName("java.lang.String");
+
+클래스가 존재하지 않으면 클래스를 가져오는데 실패한다. 예외처리해야한다.
+public static void main(String[] args) throws ClassNotFoundException{}
+
+사용하려는 클래스의 자료형을 모르는 상태에서 Class 클래스를 활용하여 그 클래스의 정보를 가져오고, 이 정보를 활용하여 인스턴스를 생성하거나 메서드를 호출하는 방식을 리플렉션이라고 한다.
+
+
+boolean -> Boolean
+byte -> Byte
+char -> Character
+short -> Short
+int -> Integer
+long -> Long
+float -> Float
+double -> Double
+
+Integer iValue = new Integer(100);
+int myValue = iValue.intValue();
+
+Integer number1 = Integer.valueOf("100");
+Integer number2 = Integer.valueOf(100);
+
+int num = Integer.parseInt("100");
+
+기본형을 객체형으로 바꾸는 것을 오토박싱, 객체형을 기본형으로 꺼내는 것을 언박싱이라고 한다.
+
+
+String을 선언하는 두 가지 방법
+String str1 = new String("abc");
+String str2 = "test";
+new 예약어를 사용하여 객체를 생성하는 경우는 "abc"문자열을 위한 메모리가 할당되고 새로운 객체가 생성된다.
+str2 = "test"와 같이 생성자를 이용하지 않고 바로 문자열 상수를 가리키는 경우에는 str2가 기존에 만들어져 있던 "test"라는 문자열 상수의 메모리 주소를 가리키게 된다. 따라서 String str3 = "test"라는 코드를 작성하면 str2와 str3는 주소 값이 같게 된다.
+
+StringBuilder buffer = new StringBuilder(str1);
+
+buffer.append(str2);
+buffer.append(str3);
+str1 = buffer.toString();
+
+
+
+toString()메서드 재정의
+@Override
+public String toString(){
+	return ...;
+}
+equals()메서드
+
+두 인스턴스의 주소 값을 비교하여 boolean 값을 반환
+두 인스턴스의 주소 값이 같다. == 두 인스턴스가 물리적으로 같다. == 두 인스턴스는 동일하다.
+물리적으로는 다르더라도 논리적으로 같을 때 같은 인스턴스라고 정의하는 경우가 있다. 이럴 때 equals()메서드를 재정의하여 사용한다.
+두 인스턴스가 있을 때 ==는 단순히 물리적으로 같은 메모리 주소인지 여부를 확인할 수 있고, Object의 equals() 메서드는 재정의를 하여 논리적으로 같은 인스턴스인지(메모리 주소가 다르더라도, 물리적으로 다르더라도) 확인하도록 구현할 수 있다.
+
+@Override
+public boolean equals(Object obj){
+	if(obj instanceof Student){
+		student std = (Student)obj;
+		if(this.studentId == std.studentId)
+			return true;
+		else return false;
+	}
+	return false;
+}
+
+hash는 정보를 저장하거나 검색할 때 사용하는 자료구조.
+해시 함수는 객체의 특정정보(키 값)를 매개변수 값으로 넣으면 그 객체가 저장되어야 할 위치나 저장된 해시 테이블 주소(위치)를 반환한다.따라서 객체 정보를 알면 해당 객체의 위치를 빠르게 알 수 있다. 자바에서는 인스턴스를 힙 메모리에 생성하여 관리할 때 해시 알고리즘을 사용한다.
+hashcode = hash(key); // 객체의 해시 코드 값(메모리 위치 값)이 반환
+
+자바에서는 두 인스턴스가 같다면(물리적으로) hashCode() 메서드에서 반환하는 해시 코드 값이 같아야 한다. 따라서 논리적으로(물리적으로는 다른) 같은 두 객체도 같은 해시 코드 값을 반환하도록 hashCode() 메서드를 재정의해야 한다. 즉, equals()를 재정의했다면 hashCode()도 재정의해야 한다.
+
+일반적으로 hashCode()메서드를 재정의할 때는 equals()메서드에서 논리적으로 같다는 것을 구현할 때 사용한 멤버 변수를 활용하는 것이 좋다.
+@Override
+public int hashCode() {
+	return studentId;
+}
+
+실제 인스턴스의 주소 값은 System.identityHashCode() 메서드를 사용하면 알 수 있다. 즉 studentLee와 studentSang은 논리적으로는 같지만, 실제로는 다른 인스턴스이다.
+
+
+clone()
+객체 원본을 유지해 놓고 복사본을 사용한다거나, 기본 틀의 복사본을 사용해 동일한 인스턴스를 만들어 복잡한 생성과정을 간단히 하려는 경우에 clone() 메서드를 사용할 수 있다.
+객체를 복제해 또 다른 객체를 반환해주는 메서드이다.
+멤버 변수가 동일한 인스턴스가 다른 메모리에 새로 생성된다.
+class Circle implements Cloneable {
+...
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+}
+
+
+abstract
+추상클래스
+메서드 구현에 대한 책임을 상속받는 클래스에 위임한다. new예약어로 인스턴스 생성불가. 상속을 하기 위해 만든 클래스
+추상메서드
+템플릿 메서드 
+템플릿 메서드의 역할은 메서드 실행 순서와 시나리오를 정의하는 것이다.
+흐름이 변하지 않도록 하위 클래스에서 재정의하지 못하게 final로 선언하는 메서드를 템플릿 메서드라고 한다.
+
+
+final예약어
+변수, 메서드, 클래스
+
+
+인터페이스
+클래스 혹은 프로그램이 제공하는 기능을 명시적으로 선언하는 역할을 한다. 추상메서드 + 상수.
