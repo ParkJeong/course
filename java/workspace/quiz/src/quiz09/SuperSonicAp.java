@@ -19,7 +19,7 @@ public class SuperSonicAp extends Airplane{
 			System.out.println("고속 모드로 비행합니다.");
 		}
 		else if(this.flyMode == 0) {
-			System.out.println("일반 모드로 비행합니다.");
+			super.fly();
 		}
 	}
 

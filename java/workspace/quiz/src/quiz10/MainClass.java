@@ -12,5 +12,6 @@ public class MainClass {
 		myCart1.buy("com");
 		myCart1.buy("tv");
 		myCart1.buy("tv");
+		
 	}
 }

@@ -60,15 +60,16 @@ public class MyCart extends Cart{
 	@Override
 	void add(String product) {
 		if(this.i >= cart.length) {
-			String[] tempCart = new String[cart.length];
+			String[] tempCart = new String[cart.length * 2];
 			for(int i = 0; i < cart.length; i++) {
 				tempCart[i] = cart[i];
 			}
 			
-			cart = new String[cart.length * 2];
-			for(int i = 0; i < tempCart.length; i++) {
-				cart[i] = tempCart[i];
-			}
+			cart = tempCart;
+//			cart = new String[cart.length * 2];
+//			for(int i = 0; i < tempCart.length; i++) {
+//				cart[i] = tempCart[i];
+//			}
 		}
 		cart[this.i] = product;
 		this.i++;
@@ -103,6 +104,7 @@ public class MyCart extends Cart{
 			}
 			System.out.println( i + "번째 물품: "+ product + ", 가격: " + cost);
 		}
+		System.out.println("남은 돈: " + money);
 		System.out.println("=========================");
 	}
 }

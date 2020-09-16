@@ -30,8 +30,8 @@ public class Car {
 	 */
 	
 	void run() {
-		for(; speed < MAX_SPEED - 30;) {
-			this.accel(30);
+		for(int i = 0; speed < MAX_SPEED; i += 30) {
+			this.accel(i);
 			System.out.println(this.speed);
 		}
 	}
