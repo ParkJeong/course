@@ -1,4 +1,4 @@
-프로그램에서 오류가 발생하는 상황은 두 가지이다. 하나는 프로그램 코드 작성 중 실수로 발생하는 컴파일 오류(compile error)이고, 다른 하나는 실행 중인 프로그램이 의도하지 않은 동작을 하거나 프로그램이 중지되는 실행 오류(runtiome error)이다.
+﻿프로그램에서 오류가 발생하는 상황은 두 가지이다. 하나는 프로그램 코드 작성 중 실수로 발생하는 컴파일 오류(compile error)이고, 다른 하나는 실행 중인 프로그램이 의도하지 않은 동작을 하거나 프로그램이 중지되는 실행 오류(runtiome error)이다.
 컴파일 오류는 개발 환경에서 대부분 원인을 알 수 있다. 하지만 실행 오류는 예측하기 어렵다.
 
 실제 서비스를 제공하고 있는 프로그램의 경우 오류가 생기면 서비스가 중지되므로 문제가 심각해진다. 또한 실행 중에 오류가 발생하면 그 상황을 재현하여 테스트해야 하는데, 실제 시스템이나 서비스가 운영 중인 경우에는 쉽지 않다. 따라서 로그 (log)분석을 통해 원인을 찾을 수 있도록 프로그램을 개발할 때 로그를 정확하게 남기는 것이 중요하다.
@@ -20,18 +20,14 @@ Throwable <- Error, Exception
 Exception <- IOException, RuntimeExcepton
 IOException <- FileNotFoundException, SocketException
 RuntimeException <- ArithmeticException, IndexOutofBoundsException
-
 IOException 클래스는 입출력에 대한 예외를 처리한다.
 RuntimeException는 프로그램 실행 중 발생할 수 있는 오류에 대한 예외를 처리한다.
-
 예외가 발생하면 대부분 처리하라는 컴파일 오류 메시지가 나타난다. 그런데 Exception 하위 클래스 중 RuntimeException은 예외 처리를 하지 않아도 컴파일 오류가 나지 않는다. 예를 들어 RuntimeException 하위 클래스 중 ArithmeticException은 산술 연산 중 발생할 수 있는 예외, 즉 '0으로 숫자 나누기'와 같은 경우에 발생하는 예외가 있다. 이러한 컴파일러에 의해 체크되지 않는 예외는 프로그래머가 알아서 처리해야 하므로 주의해야 한다.
-
 
 
 
 예외 처리하기
 try-catch문
-
 try {
 	예외가 발생할 수 있는 코드 부분
 } catch(처리할 예외 타입 e) {
@@ -40,6 +36,326 @@ try {
 
 try 블록에는 예외가 발생할 가능성이 있는 코드를 작성한다. 만약 try 블록 안에서 예외가 발생하면 바로 catch 블록이 수행된다. catch문의 괄호 ()안에 쓰는 예외 타입은 예외 상황에 따라 달라진다.
 
+
+RuntimeException의 하위 클래스인 ArrayIndexOutofBoundsException 클래스는 예외 처리를 하지 않아도 컴파일 오류가 나지 않는다. 따라서 프로그래머가 직접 예외 처리를 하지 않으면 예외가 잡히지 않아서 예외가 발생하는 순간에 프로그램이 갑자기 멈춘다. 그러므로 예외가 발생한 순간 프로그램이 비정상 종료되지 않도록 예외 처리를 해주어야 한다.
+
+int[] arr = new int[5];
+		
+try {
+	for(int i = 0; i <= 5; i++) {
+		arr[i] = i;
+		System.out.println(arr[i]);
+	}
+} catch(ArrayIndexOutOfBoundsException e) {
+	System.out.println(e);
+	System.out.println("예외 처리 부분");
+}
+
+예외 처리는 프로그램이 비정상 종료되는 것을 방지할 수 있으므로 매우 중요하다.
+
+
+파일 입출력에서 발생하는 예외 처리하기
+자바에서 파일을 읽고 쓰는 데 스트림 객체를 사용한다. 스트림 종류는 여러 가지가 있다. 파일에서 데이터를 바이트 단위로 읽어 들이는 FileInputStream이 있다.
+FileInputStream fis = new FileInputStream("a.txt");
+위 코드는 a.txt 파일에서 데이터를 읽어 들이기 위해 스트림 객체를 생성한다는 의미이다. 이렇게 코드를 작성하면 new FileInputStream("a.txt"); 부분에 다음과 같은 오류가 발생한다. Unhandled exception type FileNotFoundException(FileNotFoundException이 처리되지 않았다)
+위의 코드는 a.txt 파일을 열어 읽으려고 FileInputStream 클래스를 생성한 경우인데, 이 경우 a.txt 파일이 존재하지 않는 오류가 발생할 수 있다. 읽으려는 파일이 없는 경우에 자바 가상 머신에서는 FileNotFoundException 예외 클래스가 생성된다. 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+public class ExceptionHandling1 {
+	public static void main(String[] args) {
+		try {
+			FileInputStream fis = new FileInputStream("a.txt");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+}
+printStackTrace() 어디에서 예외가 발생했는지 따라가는 메서드이다.
+예외 처리를 한다고 해서 프로그램의 예외 상황 자체를 막을 수는 없다. 하지만 예외 처리를 하면 예외 상황을 알려 주는 메시지를 볼 수 있고, 프로그램이 비정상 종료되지 않고 계속 수행되도록 만들 수 있다.
+
+
+try-catch-finally문
+프로그램에서 사용한 리소스는 프로그램이 종료되면 자동으로 해제된다. 예를 들어 네트워크가 연결되었을 경우에 채팅 프로그램니 종료될 때 연결도 닫힌다. 하지만 끝나지 않고 계속 수행되는 서비스 같은 경우에 리소스를 여러 번 반복해서 열기만 하고 닫지 않는다면 문제가 발생한다. 시스템에서 허용하는 자원은 한계가 있기 때문이다. 따라서 사용한 시스템 리소스는 사용 후 반드시 close() 메서드로 닫아 주어야 한다. 
+try {
+	FileInputStream fis = new FileInputStream("a.txt");
+	if(fis != null) {
+	try {
+		fis.close();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	}
+} catch (FileNotFoundException e) {
+	System.out.println(e);
+}
+
+현재는 try 블록에서만 파일 리소스를 닫았다. 그런데 프로그램이 정상적으로 종료된 경우에도 열어 놓은 파일 리소스를 닫아야 하고, 비정상 종료된 경우에도 리소스를 닫아야 한다. 따라서 try 블록뿐 아니라 catch 블록에도 close()메서드를 사용해야 한다.
+
+만약 try 블록 안에서 발생할 수 있는 예외 상황이 여러 개라면 catch 브록을 예외 상황 수 만큼 구현해야 한다. 그런데 한번 열어 놓은 리소스를 해제하는 코드를 try-catch-catch ... 각 블록에 모두 작성해야 한다면 코드가 더러워진다. 이때 사용하는 블록이 finally이다.
+try {
+	예외가 발생할 수 있는 부분
+} catch (처리할 예외 타입 e) {
+	예외를 처리하는 부분
+} finally {
+	항상 수행되는 부분
+}
+일단 try 블록이 수행되면 finally 블록은 어떤 경우에도 반드시 수행된다. 이를테면 try나 catch문에 return 문이 있어도 수행된다.
+따라서 try-catch-catch ... 각 블록마다 리소스를 해제하지 않고 finally 블록에서 한 번만 해제해 주면 된다.
+FileInputStream fis = null;
+		
+try {
+	fis = new FileInputStream("a.txt");
+} catch (FileNotFoundException e) {
+	System.out.println(e);
+	return;
+} finally {
+	if(fis != null) {
+		try {
+			fis.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	System.out.println("항상 수행된다.");
+}
+try-with-resource문
+자바 7부터 try-with-resource문을 제공하여 close()메서드를 명시적으로 호출하지 않아도 try 블록 내에서 열린 리소스를 자동으로 닫도록 만들 수 있다. try-with-resource 문법을 사용하려면 해당 리소스가 AutoCloseable 인터페이스를 구현해야 한다.
+AutoCloseable 인터페이스에는 close() 메서드가 있고 이를 구현한 클래스는 close()를 명시적으로 호출하지 않아도 close()메서드가 호출된다. FileInputStream은 Closeable과 AutoCloseable 인터페이스를 구현했다. 따라서 자바 7부터는 try-with-resources 문법을 사용하면 FileInputStream을 사용할 때 close()를 명시적으로 호출하지 않아도 정상인 경우와 예외가 발생한 경우 모두 close() 메서드가 호출된다.
+
+
+AutoCloseable 인터페이스
+
+public class AutoCloseObj implements AutoCloseable{
+	@Override
+	public void close() throws Exception{
+		System.out.println("리소스가 close() 되었습니다.");
+		/*
+		 * 시스템 리소시인 경우에는 
+		 * 파일 스트림을 닫거나 
+		 * 네트워크 연결을 해제하는
+		 * 코드를 작성해야한다. 
+		 * 여기서는 close()메서드가
+		 *  제대로 호출되는지
+		 * 알아보기 위해 출력문만 남긴다.
+		 */
+	}
+}
+
+public static void main(String[] args) {
+	try(AutoCloseObj obj = new AutoCloseObj()) {
+	
+	} catch (Exception e) {
+		System.out.println("예외 부분입니다.");
+	}
+}
+AutoCloseObj obj = new AutoCloseObj() : 사용할 리소스 선언
+
+try-with-resource문을 사용할 때 try 문의 괄호() 안에 리소스를 선언한다. 리소스를 여러 개 생성해야 한다면 세미 콜론으로 구분한다.
+try (A a = new A(); B b = new B()) {
+	...
+} catch(Exception e) {
+	...
+}
+
+throw new Exception() 문장을 사용하면 프로그램에서 강제로 예외를 발생시켜 catch 블록이 수행되도록 구현할 수 있다.
+
+try(AutoCloseObj obj = new AutoCloseObj()) {
+	throw new Exception();
+} catch(Exception e) {
+	System.out.println("예외 부분입니다.");
+}
+
+리소스의 close() 메서드가 먼저 호출되고 예외 블록 부분이 수행된다.
+try-with-resource문을 사용하면 close() 메서드를 명시적으로 호출하지 않아도 정상 종료된 경우와 예외가 발생한 경우 모두 리소스가 잘 해제된다.
+
+향상된 try-with-resource문
+자바9전에는 AutoCloseable 인터페이스를 구현한 리소스의 변수 선언을 try문 괄호 안에서 해야 했다. 따라서 리소스가 외부에 선언되고 생성된 경우에도 다른 참조 변수로 괄호 안에 다시 선언해야 했다.
+
+AutoCloseObj obj = new AutoCloseObj();
+try (AutoCloseObj obj2 = obj){
+	throw new Exception();
+} catch (Exception e) {
+	System.out.println("예외 부분입니다");
+}
+
+하지만 자바 9부터는 아래처럼 try문의 괄호 안에서 외부에서 선언한 변수를 쓸 수 있다. 이렇게 사용하면 가독성도 좋고 반복하여 선언하는 일도 줄어든다.
+
+AutoCloseObj obj = new AutoCloseObj();
+try (obj){
+	throw new Exception();
+} catch (Exception e) {
+	System.out.println("예외 부분입니다");
+}
+
+
+예외 처리 미루기
+
+예외 처리를 미루는 throws 사용하기
+예외를 해당 메서드에서 처리하지 않고 미룬 후 메서드를 호출하여 사용하는 부분에서 예외를 처리하는 방법이다.
+
+
+throws를 활용하여 예외 처리 미루기
+예외를 처리하지 않고 미룬다고 선언하면, 그 메서드를 호출하여 사용하는 부분에서 예외 처리를 해야 한다. 
+main() 함수에서 미룬 예외 처리는 main() 함수를 호출하는 자바 가상 머신으로 보내진다. 즉 예외를 처리하는 것이 아니라 대부분의 프로그램이 비정상 종료된다. 
+따라서 main()에서는 throws 선언 보다는 try/catch문을 사용하는 것이 좋다.
+
+Surround with try/multi-catch 옵션
+이 옵션은 하나의 catch 문에서 여러 예외를 한 문장으로 처리하겠다는 뜻이다.
+
+public static void main(String[] args) {
+	ThrowsException test = new ThrowsException();
+	try {
+		test.loadClass("a.txt", "java.lang.String");
+	} catch (FileNotFoundException | ClassNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
+
+Surrond with try/catch 옵션
+이 옵션은 각 상황마다 예외 처리를 하겠다는 뜻이다. 각 예외 상황마다 다른 방식으로 처리해야하고 로그도 다르게 남겨야 하는 경우라면 이 옵션을 사용한다.
+
+public static void main(String[] args) {
+	ThrowsException test = new ThrowsException();
+	try {
+		test.loadClass("a.txt", "java.lang.String");
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ClassNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
+
+예외가 발생한 메서드에서 그 예외를 바로 처리할 것인지, 아니면 미루어서 그 메서드를 호출하여 사용하는 부분에서 처리할 것인지는 만들고자 하는 프로그램 상황에 따라 다를 수 있다. 만약 어떤 메서드가 다른 여러 코드에서 호출되어 사용된다면 호출하는 코드의 상황에 맞게 로그를 남기거나 예외 처리를 하는 것이 더 좋다. 따라서 이런 경우에는 메서드를 호출하는 부분에서 예외처리를 하도록 미루는 것이 합리적이다.
+
+
+다중 예외 처리
+어떤 예외가 발생할지 미리 알 수 없지만 모든 예외 상황을 처리하고자 하면 맨 마지막 부분에 Exception 클래스를 활용하여 catch 블록을 추가한다.
+public static void main(String[] args) {
+	ThrowsException test = new ThrowsException();
+	try {
+		test.loadClass("a.txt", "java.lang.String");
+	} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ClassNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (Exception e) {		// Exception클래스로
+		e.printStackTrace();	// 그외 예외 상황 처리
+	}				//
+}
+
+Exception 클래스는 모든 예외 클래스의 최상위 클래스이다. 따라서 다른 catch 블록에 선언한 것 이외의 예외가 발생하더라도 Exception 클래스로 자동 형 변환된다. Exception 클래스를 기본 예외 처리라고도 한다.
+
+
+다중 예외 처리에서 주의 사항
+예외는 catch문을 선언한 순서대로 검사한다. 따라서 맨 위에 catch(Exception e)문장을 쓰면 발생하는 모든 예외 클래스는 Exception 상위 클래스로 자동 형 변환되어 오류가 발생한다. 
+
+
+public static void main(String[] args) {
+	ThrowsException test = new ThrowsException();
+	try {
+		test.loadClass("a.txt", "java.lang.String");
+	} catch (Exception e) {			// <-
+		e.printStackTrace();
+	} catch (ClassNotFoundException e) {
+		e.printStackTrace();
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	}
+}
+맨 위에 Exception을 활용한 catch 블록을 사용할 경우 이후 예외 클래스에 오류 발생한다.
+Exception 클래스의 아래에 있는 ClassNotFoundException과 FileNotFoundException에 오류가 발생한다.
+(Unreachable catch block for FileNotFoundException.
+it is already handled by the catch block for Exception.)
+
+기본 예외 처리를 하는 동안 Exception 클래스에 의해 모든 예외가 처리되므로 ClassNotFoundException이나 FileNotFoundException 문장에는 예외가 도달할 일이 없어 컴파일 오류가 발생한다. 따라서 기본 예외 처리를 하는 Exception 클래스 블록은 여러 예외처리 블록의 가장 아래에 놓여야 한다.
+
+
+
+사용자 정의 예외
+자바에서 제공하는 예외 처리 클래스 이외에 개발하는 프로그램에 따라 다양한 예외 상황이 발생할 수 있다. 예를 들어 어떤 사이트에 회원 가입을 할 때 입력하는 아이디 값이 null이어서는 안 되고 8자 이상 20자 이하로 만들어야 하는 조건이 필요할 수도 있다. 이런 조건을 체크하는 작업을 자바 프로그램에서 한다면 예외 클래스를 직접 만들어 예외를 발생시키고 예외 처리 코드를 구현할 수 있다.
+
+
+사용자 정의 예외 클래스 구현하기
+사용자 정의 예외 클래스를 구현할 때는 기존 JDK에서 제공하는 예외 클래스 중 가장 유사한 클래스를 상속받는 것이 좋다. 유사한 예외 클래스를 잘 모르겠다면 가장 상위 클래스인 Exception 클래스에서 상속받아라.
+
+public class PasswordException extends IllegalArgumentException{
+	
+	public PasswordException(String message) {
+		super(message);
+	}
+}
+
+
+
+public class IDFormatException extends Exception{
+	public IDFormatException(String message) {
+		super(message);
+	}
+}
+// String message
+// 생성자의 매개변수로 예외 상황 메시지를 받음
+
+Exception 클래스에서 미지 생성자, 멤버 변수와 메서드를 이미 제공하고 있으므로 super(mesage)를 사용하여 예외 메시지를 설정한다. 나중에 getMessage() 메서드를 호출하면 메시지 내용을 볼 수 있다.
+
+public class IDFormatTest {
+	private String userID;
+	
+	public String getUserID() {
+		return userID;
+	}
+	
+
+	public void setUserID(String userID) throws IDFormatException {
+// IDFormatException 예외를 setUserID() 메서드가 호출될 때 처리하도록 미룸
+
+		if(userID == null) {
+			throw new IDFormatException("아이디는 null일 수 없습니다.");
+// 강제로 예외 발생시킴
+		}
+		else if(userID.length() < 8 || userID.length() > 20) {
+			throw new IDFormatException("아이디는 8자 이상 20자 이하로 쓰세요");
+// 강제로 예외 발생시킴
+		}
+		this.userID = userID;
+	}
+	
+	public static void main(String[] args) {
+		IDFormatTest test = new IDFormatTest();
+		
+		String userID = null;
+		try {
+			test.setUserID(userID);
+		} catch (IDFormatException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		userID = "1234567";
+		try {
+			test.setUserID(userID);
+		} catch (IDFormatException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+}
+메서드를 호출하는 부분에서 처리하도록 throws 예약어를 선언
+
+
+예외 처리를 할 때는 로그를 잘 남기자
+프로그램을 개발할 때는 로그를 남기는 것이 매우 중요하다. 오류가 발생했을 때 로그를 보고 오류가 발생하는 로그를 순서대로 따라가며 확인할 수 있고 원인을 찾을 수 있다. 로그는 정보 의미에 따라 레벨을 나누어 관리한다. 간단한 정보 의미를 가진 로그부터 심각한 예외가 발생했을 때의 로그까지 여러 레벨이 존재할 수 있다. 이러한 로그를 체계적이고 의미 있게 남겨서 시스템에서 오류가 났을 때 그 원인을 유추해 볼 수 있어야 한다.
+
+
+모든 예외 클래스의 최상위 클래스는 Exception이다.
+
+try {} 블록이 수행되면 항상 수행되는 블록으로 주로 열린 파일이나 네트워크 리소스의 해제를 수행하는 블록을 구현하는 예약어는 finally 이다.
+
+예외 처리를 위해 try-catch 문장을 사용할 수도 있지만, 예외를 직접 처리하지 않고 미룰 때 사용하는 예약어는 throws이다.
+
+사용자가 예외를 직접 발생시키기 위해 사용하는 예약어는 throw이다.
 
 
 
