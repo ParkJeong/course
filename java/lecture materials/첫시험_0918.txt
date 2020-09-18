@@ -1,0 +1,186 @@
+4
+
+2 byte >- char
+
+y= 12
+true
+67
+66
+67
+
+for(int i = 1; i < arr.length; i++) {
+    for(int j = i + 1; j < 3; j++) {
+        if(arr[i] > arr[j]) {
+            int temp = 0;
+            temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp; 
+        }
+    }
+}
+
+
+
+
+true
+false
+false
+
+String str1 = "kim";과 같이 선언하면 str1은 데이터 영역에 생성된 "kim"을 가리키게된다. 이후에 같은 방식(String str2 = "kim")으로 선언하더라도 데이터 영역에 생성된 "kim"을 가리키게 되어 str1과 str2는 동일하다.
+String str3 = new String(str1);의 방식은 힙 영역에 새로운 String 인스턴스를 생성하고 그 인스턴스를 str3가 참조하는 형식이다. 그래서 이 방식으로 선언시 새로운 인스턴스가 생성되므로 각 인스턴스의 주소값은 달라진다.
+
+
+equals()
+
+
+
+class Animal {
+    private String name;
+    Animal(String name){
+        this.name = name;
+    }
+}
+
+class Tiger extends Animal{
+    Tiger(String name) {
+        super(name);
+    }
+}
+class Cat extends Animal{
+    Cat(String name) {
+        super(name);
+    }
+}
+class Dog extends Animal{
+    Dog(String name) {
+        super(name);
+    }
+}
+
+
+overriding은 하위클래스에서 상위클래스의 메서드를 재정의하는 것이다.
+
+overloading은 매개변수(매개변수 종류, 순서, 개수)를 다르게 함으로써 같은 이름의 메서드를 2개 이상 만들 수 있게 하는것이다.
+
+
+
+super(name, age);
+
+
+4
+
+
+public class Tv {
+    private boolean power;
+    private int channel;
+    private int prevChannel;
+    private int volume;
+
+    public boolean getPower() {
+        return power;
+    }
+    
+    public void setPower(boolean power) {
+        this.power = power;
+        if(power == true) {
+            System.out.println("전원이 켜졌습니다.");
+            return;
+        }
+        System.out.println("전원이 꺼졌습니다.");
+    }
+    public int getChannel() {
+        return channel;
+    }
+    
+    public void setChannel(int channel) {
+        prevChannel = this.channel;
+        this.channel = channel;
+    }
+
+    public int getVolume() {
+        return power;
+    }
+    
+    public void setVolume(int volume) {
+        if(volume >= 1 && volume <= 100){
+            this.volume = volume;
+            return;
+        }
+        System.out.println("volume은 1~100 사이의 숫자로 입력해주세요.");
+    }
+}
+
+
+
+public class House {
+    private Person[] persons;
+    private int size;    
+
+    House() {
+        persons = new Person[10];
+        size = 0;
+    }
+    
+    public void getIn(Person p){
+        persons[size] = p;
+        size++;
+    }
+
+    public Person[] getPersons() {
+        return persons;
+    }
+    
+    public void print() {
+        for(int i = 0; i < size; i++){
+            System.out.println("이름: " + p.getName() + ", 나이: " + p.getAge());
+        }
+    }
+    
+}
+
+
+
+class Person {
+    private String name;
+    private int age;
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName(){
+        return name;
+    }
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+    
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

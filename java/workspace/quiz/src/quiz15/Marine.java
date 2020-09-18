@@ -10,6 +10,24 @@ public class Marine extends Unit{
 	}
 	
 	public Marine() {
-		hp = 60;
+		super(0, 0, 60);
+	}
+
+	@Override
+	public void location() {
+		// TODO Auto-generated method stub
+		System.out.println("x: " + this.getX() + ", y: " + this.getY());
+	}
+
+	@Override
+	public void move(int x, int y) {
+		// TODO Auto-generated method stub
+		int distanceX = Math.abs(x - this.getX());
+		int distanceY = Math.abs(y - this.getY());
+		
+		this.setX(x);
+		this.setY(y);
+		
+		System.out.println((int)Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2)));
 	}
 }

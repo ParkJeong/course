@@ -28,5 +28,13 @@ public class LocalInnerTest {
 		Outer out = new Outer();
 		Runnable runner = out.getRunnable(10);
 		runner.run();
+		
+		char c = 'a';
+		byte b = 2;
+		
+		System.out.println(c);
+		System.out.println(b);
+		
+		System.out.println(c);
 	}
 }
