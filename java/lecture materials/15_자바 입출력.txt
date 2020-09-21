@@ -242,6 +242,647 @@ flush() 메서드와 close() 메서드
 
 
 
+문자 단위 스트림
+
+Reader
+
+문자 단위로 읽는 스트림 중 최상위 스트림으로 다음 하위 클래스를 주로 사용한다.
+
+FileReader: 파일에서 문자 단위로 읽는 스트림 클래스이다.
+InputStreamReader: 바이트 단위로 읽은 자료를 문자로 반환해 주는 보조 스트림 클래스이다.
+BufferedReader: 문자로 읽을 때 배열을 제공하여 한꺼번에 읽을 수 있는 기능을 제공해 주는 보조 스트림이다.
+
+int read(): 파일로부터 한 문자를 읽는다. 읽은 값을 반환한다.
+
+int read(char[] buf): 파일로부터 buf 배열에 문자를 읽는다.
+
+int read(char[] buf, int off, int len): 파일로부터 buf 배열의 off 위치에서부터 len 개수만큼 문자를 읽는다.
+
+void close(): 스트림과 연결된 파일 리소스를 닫는다.
+
+
+FileReader
+FileReader를 생성하는 데 사용하는 생성자는 다음과 같다. FileInputStream과 마찬가지로 읽으려는 파일이 없으면 FileNotFoundException이 발생한다.
+
+FileReader(String name): 파일 이름 name(경로포함)을 매개변수로 받아 입력 스트림을 생성한다.
+
+FileReader(File f): File 클래스 정보를 매개변수로 받아 입력 스트림을 생성한다.
+
+한글을 바이트 단위로 읽어 오면 무슨 글자인지 알 수 없다. 따라서 문자를 입출력할 때는 문자 스트림을 사용해야 한다.
+
+
+import java.io.FileReader;
+import java.io.IOException;
+
+public class FileReaderTest {
+	public static void main(String[] args) {
+		try(FileReader fr = new FileReader("reader.txt")){
+			int i;
+			while((i = fr.read()) != -1) {
+				System.out.println((char)i);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+Writer
+문자 단위로 출력하는 스트림 중 최상위 스트림으로 다음 하위 클래스를 주로 사용한다.
+
+FileWriter: 파일에 문자 단위로 출력하는 스트림 클래스이다.
+
+OutputStreamWriter: 파일에 바이트 단위로 출력한 자료를 문자로 변환해 주는 보조 스트림이다.
+
+BufferedWriter: 문자로 쓸 때 배열을 제공하여 한꺼번에 쓸 수 있는 기능을 제공해 주는 보조 스트림이다.
+
+다음과 같이 자료를 읽는 메서드를 제공한다.
+
+void write(int c): 한 문자를 파일에 출력한다.
+
+void write(char[] buf): 문자 배열 buf의 내용을 파일에 출력한다.
+
+void write(char[] buf, int off, int len): 문자 배열 buf의 off 위치에서부터 len 개수의 문자를 파일에 출력한다.
+
+
+void write(String str): 문자열 str을 파일에 출력한다.
+
+void write(String str, int off, int len): 문자열 str의 off번째 문자부터 len 개수만큼 파일에 출력한다.
+
+void flush(): 파일에 출력하기 전에 자료가 있는 공간(출력 버퍼)을 비워 출력한다.
+
+void close(): 파일과 연결된 스트림을 닫는다. 출력 버퍼도 비워진다.
+
+
+FileWriter
+다른 스트림 클래스와 마찬가지로 생성자를 사용해서 스트림을 생성한다. FileOutputStream과 마찬가지로 출력 파일이 존재하지 않으면 파일을 생성한다. 
+
+FileWriter(String name): 파일 이름 name(경로 포함)을 매개변수로 받아 출력 스트림을 생성한다.
+
+FileWriter(String name, boolean append): 파일 이름 name(경로 포함)을 매개변수로 받아 출력 스트림을 생성한다. append 값이 true면 파일 스트림을 닫고 다시 생성할 때 파일 끝에 이어서 쓴다. 기본 값은 false이다.
+
+FileWriter(File f): File 클래스 정보를 매개변수로 받아 출력 스트림을 생성한다.
+
+FileWriter(File f, boolean append): File 클래스 정보를 매개변수로 받아 출력 스트림을 생성한다. append 값이 true이면 스트림을 닫고 다시 생성할 때 파일 끝에 이어서 쓴다. 기본 값은 false이다.
+
+
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class FileWriterTest {
+	public static void main(String[] args) {
+		try(FileWriter fw = new FileWriter("writer.txt")){
+			fw.write('A');
+			char buf[] = {'B', 'C', 'D', 'E', 'F', 'G'};
+			
+			fw.write(buf);
+			fw.write("안녕하세요. 잘 써지네요");
+			fw.write(buf, 1, 2);
+			fw.write(65);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("출력이 완료되었습니다.");
+	}
+}
+
+
+
+보조 스트림
+
+보조 스트림은 입출력 대상이 되는 파일이나 네트워크에 직접 쓰거나 읽는 기능은 없다. 말 그대로 보조 기능을 추가하는 스트림이다. 이 보조 기능은 여러 스트림에 적용할 수 있다.
+
+보조 스트림은 다른 말로 Wrapper 스트림이라고도 한다. 다른 스트림을 감싸고 있다는 의미이다. 스스로는 입출력 기능이 없기 때문에 생성자의 매개변수로 다른 스트림을 받게 되면 자신이 감싸고 있는 스트림이 읽거나 쓰는 기능을 수행할 때 보조 기능을 추가한다.
+
+보조스트림처럼 다양한 기능을 제공하는 클래스를 디자인 패턴에서 데코레이터(decorator)라고 한다.
+
+
+
+FilterInputStream과 FilterOutputStream
+
+FilterInputStream과 FilterOutputStream은 보조 스트림의 상위 클래스이다. 모든 보조 스트림은 FilterInputStream과 FilterOutputStream을 상속받는다. 보조 스트림은 자료 입출력을 직접 할 수 없기 때문에 다른 기반 스트림을 포함한다.
+
+
+protected FilterInputStream(InputStream in): 생성자의 매개변수로 InputStream을 받는다.
+
+public FilterOutputStream(OuputStream out): 생성자의 매개변수로 OutputStream을 받는다.
+
+보조스트림의 생성자에 항상 기반 스트림만 매개변수로 전달되는 것은 아니다. 때로는 또 다른 보조 스트림을 매개변수로 전달받을 수도 있다. 이때 전달되는 또 다른 보조 스트림은 내부적으로 기반 스트림을 포함하고 있다. 이런 경우는 하나의 기반 스트림에 여러 보조 스트림 기능이 추가된다.
+
+
+
+InputStreamReader와 OutputStreamWriter
+바이트 단위로 자료를 읽으면 한글 같은 문자는 깨진다. 그래서 문자는 Reader나 Writer에서 상속받은 스트림을 사용해서 자료를 읽거나 써야 한다. 하지만 바이트 자료만 입력되는 스트림도 있다. 대표적으로 표준 입출력 System.in 스트림이다. 또한 네트워크에서 소켓이나 인터넷이 연결되었을 때 읽거나 쓰는 스트림은 바이트 단위인 InputStream과 OutputStream이다. 이렇게 생성된 바이트 스트림을 문자로 변환해 주는 보조 스트림이 InputStreamReader와 OuputStreamWriter이다.
+
+
+InputStreamReader의 생성자
+InputStreamReader(InputStream in): InputStream 클래스를 생성자의 매개변수로 받아 Reader를 생성한다.
+
+InputStreamReader(InputStream in, Charset cs): InputStream과 Charset 클래스를 매개변수로 받아 Reader를 생성한다.
+
+InputStreamReader(InputStream in, CharsetDecoder dec): InputStream과 CharsetDecoder를 매개변수로 받아 Reader를 생성한다.
+
+InputStreamReader(InputStream in, String charsetName): InputStream과 String으로 문자 세트 이름을 받아 Reader를 생성한다.
+
+InputStreamReader 생성자의 매개변수로 바이트 스트림과 문자 세트를 매개변수로 지정할 수 있다. 문자세트란 문자를 표현하는 인코딩 방식이다. 바이트 자료가 문자로 변환될 때 지정된 문자 세트가 적용된다. 적용할 문자 세트를 명시하지 않으면 시스템이 기본으로 사용하는 문자 세트가 적용된다.
+
+문자세트는 각 문자가 가지는 고유 값이 어떤 값으로 이루어졌는가에 따라 다르다. 대표적으로 자바에서 사용하는 UTF-16 문자 세트가 있는데 이는 유니코드를 나타내는 문자 세트 중 하나이다.
+
+
+InputStreamReader의 모든 생성자는 inputStream, 즉 바이트 단위로 읽어 들이는 스트림을 매개변수로 받는다. 생성자에서 매개변수로 받은 InputStream이 자료를 읽으면 inputStreamReader가 읽은 바이트 자료를 문자로 변환해 준다.
+
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class InputStreamReaderTest {
+	public static void main(String[] args) {
+		try(InputStreamReader isr = new InputStreamReader(new FileInputStream("reader.txt"))){
+			int i;
+			while((i = isr.read()) != -1) {
+				System.out.print((char)i);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+표준 입출력 스트림 System.in과 System.out은 모두 바이트 스트림이다. 네트워크에서 쓰이는 클래스는 스트림을 생성하면 InputStream이나 OutputStream으로 생성된다.
+
+
+Buffered 스트림
+입출력이 한 바이트나 문자 단위로 이루어지면 그만큼 프로그램 수행 속도가 느려진다. Buffered 스트림은 내부적으로 8,192바이트 크기의 배열을 가지고 있으며 이미 생성된 스트림에 배열 기능을 추가해 더 빠르게 입출력을 실행할 수 있는 버퍼링 기능을 제공한다.
+
+BufferedInputStream: 바이트 단위로 읽는 스트림에 버퍼링 기능을 제공한다.
+
+BufferedOutputStream: 바이트 단위로 출력하
+는 스트림에 버퍼링 기능을 제공한다.
+
+BufferedReader: 문자 단위로 읽는 스트림에 버퍼링 기능을 제공한다.
+
+BufferedWriter: 문자 단위로 출력하는 스트림에 버퍼링 기능을 제공한다.
+
+버퍼링 기능을 제공하는 스트림 역시 보조 스트림으로 다른 스트림을 포함하여 수행된다.
+
+BufferedInputStream(InputStream in): InputStream 클래스를 생성자의 매개변수로 받아 BufferedInputStream을 생성한다. 
+
+BufferedInputStream(InputStream in, int size): InputStream 클래스와 버퍼 크기를 생성자의 매개변수로 받아 BufferedInputStream을 생성한다.
+
+BufferedInputStream은 보조 스트림이므로 생성자의 매개변수로 다른 InputStream을 가져야 한다. BufferedOutputStream은 OutputStream을, BufferedReader는 Reader를, BufferedWriter는 Writer 클래스를 생성자의 매개변수로 받는다. Buffered 스트림이 포함할 스트림이 입력 스트림인지 출력 스트림인지, 문자용인지 바이트용인지에 따라 그에 맞는 스트림을 사용한다.
+
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class FileCopyTest {
+	public static void main(String[] args) {
+		long millisecond = 0;
+		try(FileInputStream fis = new FileInputStream("a.zip");
+				FileOutputStream fos = new FileOutputStream("copy.zip")){
+			millisecond = System.currentTimeMillis();
+			int i;
+			while((i = fis.read()) != -1) {
+				fos.write(i);
+			}
+			millisecond = System.currentTimeMillis() - millisecond;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("파일 복사하는 데" + millisecond + "milliseconds 소요되었습니다.");
+	}
+}
+
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class BufferedStreamTest {
+	public static void main(String[] args) {
+		long millisecond = 0;
+		try(FileInputStream fis = new FileInputStream("a.zip");
+		FileOutputStream fos = new FileOutputStream("copy.zip");
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		BufferedOutputStream bos = new BufferedOutputStream(fos)){
+			millisecond = System.currentTimeMillis();
+			int i;
+			while((i = bis.read()) != -1) {
+				bos.write(i);
+			}
+			millisecond = System.currentTimeMillis() - millisecond;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("파일 복사하는 데" + millisecond + "millseconds 소요되었습니다.");
+	}
+}
+
+
+
+
+FileInputStream과 FileOutputStream을 사용하여 5MB의 파일을 복사하는데 232초 정도 걸린다. BufferedInputStream과 BufferedOuputStream을 사용하여 5MB의 파일을 복사하는데 0.079초 걸린다. 걸리는 시간은 컴퓨터마다 다를 수 있다.
+한 바이트를 읽고 쓰는 과정의 시간이 여러 바이트를 한꺼번에 읽고 쓰는 것보다 당연히 오래 걸린다.
+
+Buffered 스트림은 멤버 변수로 8,192 바이트 배열을 가지고 있다. 즉 한 번 자료를 읽을 때 8KB 정보를 한꺼번에 읽고 쓸 수 있으므로 1바이트씩 읽고 쓸 때보다 훨씬 빠른 수행을 보장한다. 배열의 크기는 Buffered 스트림 생성자 매개변수로 지정할 수 있다.
+
+
+
+소켓 통신에서 스트림 사용하기
+채팅을 하려면 서버와 채팅 클라이언트 프로그램이 서로 통신을 해야 한다. 자바는 통신을 위한 여러 클래스를 제공한다. 가장 간단하게 소켓 통신을 한다고 가정하자. 소켓이란 통신에 사용하는 네트워크 연결 리소스이다. 소켓 통신을 위해 자바는 Socket 클래스를 제공한다. Socket 클래스에서 스트림을 사용하는 방법은 다음과 같다.
+
+Socket socket = new Socket();
+InputStream is = socket.getInputStream();
+
+소켓 통신을 하기 위해 스트림을 가져올 때는 getInputStream()이나 getOutputStream()을 사용해야 한다. getInputStream() 메서드를 호출하면 InputStream이 반환된다. 그런데 InputStream은 바이트 단위 스트림이므로 한글을 쓰면 깨진다. 따라서 이를 문자로 변환해야 한다. 그리고 여기에 버퍼링 기능을 추가해 주면 더 빠르게 읽고 쓸 수 있다. 다음은 각 기능이 추가된 입출력 스트림 코드이다.
+
+Socket socket = new Socket();
+BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+InputStreamReader를 사용하여 Reader로 변환된 스트림을 BufferedReader로 감싸서 다시 버퍼링 기능을 제공한다. 
+
+
+DataInputStream과 DataOutputStream은 메모리에 저장된 0, 1 상태를 그대로 읽거나 쓴다. 그래서 자료형의 크기가 그대로 보존된다.
+
+DataInputStream(InputStream in): InputStream을 생성자의 매개변수로 받아 DataInputStream을 생성한다.
+
+DataOutputStream(OutputStream out): OutputStream을 생성자의 매개변수로 받아 DataOutputStream을 생성한다.
+
+
+자료형을 그대로 읽고 쓰는 스트림이기 때문에 같은 정수라도 자료형에 따라 다르게 처리한다. 즉 writeByte(100)은 1바이트로 쓰인 100을 의미하지만, writeInt(100)은 4바이트로 쓰인 100을 의미한다. 따라서 자료를 쓸 대 사용한 메서드와 같은 자료형의 메서드로 읽어야 한다. 즉 정수 100을 쓰는 데 writeInt(100)을 쓰고 readByte()로 읽으면 서로 사용한 메모리 크기가 달라서 같은 값을 가져올 수 없다. 또 파일이든 네트워크든 자료를 쓸 때 사용한 메서드 순서대로 읽어야 한다.
+
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class DataStreamTest {
+	public static void main(String[] args) {
+		try(FileOutputStream fos = new FileOutputStream("data.txt");
+			DataOutputStream dos = new DataOutputStream(fos)){
+			dos.writeByte(100);
+			dos.writeChar('A');
+			dos.writeInt(10);
+			dos.writeFloat(3.14f);
+			dos.writeUTF("Test");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try(FileInputStream fis = new FileInputStream("data.txt");
+			DataInputStream dis = new DataInputStream(fis)){
+			System.out.println(dis.readByte());
+			System.out.println(dis.readChar());
+			System.out.println(dis.readInt());
+			System.out.println(dis.readFloat());
+			System.out.println(dis.readUTF());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+파일스트림을 만들고 여기에 DataInputStream과 DataOutputStream 기능을 추가하면 기반 스트림에서 쓸 수 없던 각 자료형의 자료를 그대로 읽고 쓸 수 있다. 파일에 쓴 것과 동일한 순서, 동일한 메서드로 읽어야 한다.
+
+
+
+자바 입출력 스트림은 데코레이터 패턴이다.
+
+보조 스트림은 자바 입출력 스트림 클래스에 유동적이고 효율적으로 기능을 추가하거나 제거할 수 있는 클래스이다. 이러한 구조를 디자인 패턴에서는 데코레이터 패턴이라고 한다. 자바의 입출력 스트림 클래스는 데코레이터 패턴 구조이다. 데코레이터 패턴에서 클래스는 실제로 입출력이 가능한 클래스와 그렇지 않은 클래스로 구분된다. 커피, 우유, 시럽을 생각해 보자. 우유와 시럽은 커피에 추가 기능을 제공하는 역할을 한다. 추가 기능을 제공하는 클래스와 실제 역할을 하는 클래스는 구분해서 생각해야 한다.
+
+이렇게 기능이 동적으로 추가되는 클래스를 데코레이터라고 한다. 자바의 스트림 클래스에 여러 데코레이터 클래스가 추가되는데 이들 데코레이터는 하나의 클래스에 국한하지 않고 여러 클래스에 다양하게 적용할 수 있다. 예를 들어 BufferedReader는 FileReader를 감쌀 수도 있지만 또 다른 보조 스트림 InputStreamReader도 감싸서 기능을 더할 수 있다. 즉 보조 스트림은 자료형만 맞다면 또 다른 보조 스트림에 기능을 더해 줄 수도 있다.
+
+
+
+직렬화
+
+인스턴스의 어느 순간 상태를 그대로 저장하거나 네트워크를 통해 전송할 일이 있을 수 있다. 이를 직렬화(serialization)라고 한다. 그리고 저장된 내용이나 전송받은 내뇽을 다시 복원하는 것을 역직렬화(deserialization)라고 한다. 다시 말해 직렬화란 인스턴스 내용을 연속 스트림으로 만드는 것이다. 스트림으로 만들어야 파일에 쓸 수도 있고 네트워크로 전송할 수도 있다. 따라서 직렬화 과정에서 하는 일은 인스턴스 변수 값을 스트림으로 만드는 것이다. 복잡한 과정일 수 있지만 자바에서는 보조 스트림인 ObjectInputStream과 ObjectOutputSream을 사용하여 좀 더 쉽게 구현할 수 있다.
+
+ObjectInputStream(InputStream in): InputStream을 생성자의 매개변수로 받아 ObjectInputStream을 생성한다.
+
+ObjectOutputStream(OutputStream out): OutputStream을 생성자의 매개변수로 받아 ObjectOutputStream을 생성한다.
+
+저장할 파일이나 전송할 네트워크 등의 기반 스트림늘 매개변수로 받아서 인스턴스 변수 값을 저장하거나 전송한다.
+ex
+Person 클래스의 생성자로 두 인스턴스를 생성한다.
+이를 serial.out 파일에 저장한다.(직렬화)
+그러고 나서 erial.out 파일에서 저장된 내용을 읽어서 원래 인스턴스 상태로 복원한다.(역직렬화)
+
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+class Person {
+	private static final long serialVersionUID = -1503252402544036183L;
+	String name;
+	String job;
+	
+	public Person() {}
+	
+	public Person(String name, String job) {
+		this.name = name;
+		this.job = job;
+	}
+	
+	public String toString() {
+		return name + "," + job;
+	}
+}
+
+public class SerializationTest {
+	public static void main(String[] args) throws ClassNotFoundException{
+		Person personAhn = new Person("안재용", "대표이사");
+		Person personKim = new Person("김철수", "상무이사");
+		
+		try(FileOutputStream fos = new FileOutputStream("serial.out");
+			ObjectOutputStream oos = new ObjectOutputStream(fos)){
+			oos.writeObject(personAhn);
+			oos.writeObject(personKim);
+			
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		try(FileInputStream fis = new FileInputStream("serial.out");
+				ObjectInputStream ois = new ObjectInputStream(fis)){
+			Person p1 = (Person)ois.readObject();
+			Person p2 = (Person)ois.readObject();
+			
+			System.out.println(p1);
+			System.out.println(p2);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+Serializable 인터페이스
+
+직렬화는 인스턴스 내용이 외부로 유출되는 것이므로 프로그래머가 직렬화를 하겟다는 의도를 표시해야 한다. 따라서 Person 클래스에 마커 인터페이스(marker interface)인 Serializable 인터페이스를 다음과 같이 추가해야한다.
+
+import java.io.Serializable;
+
+class Person implements Serializable {
+...
+}
+
+
+
+transient 예약어
+직렬화 대상이 되는 클래스는 모든 인스턴스 변수가 직렬화되고 복원된다. 그런데 직렬화 될 수 없는 클래스(Socket 클래스는 직렬화될 수 없다.)가 인스턴스 변수로 있다거나 직렬화하고 싶지 않은 변수가 있을 수 있다. 그럴 때 transient 예약어를 사용한다. 그러면 해당 변수는 직렬화되고 복원되는 과정에서 제외된다. transient 예약어를 사용한 변수 정보는 그 자료형의 기본 값으로 저장된다. 따라서 객체 자료형인 경우에 null 값이 된다. 
+
+String name;
+transient String job;
+
+
+serialVersionUID를 사용한 버전 관리
+객체를 역직렬화할 때, 직렬화할 때의 클래스와 상태가 다르면 오류가 발생한다. 그 사이 클래스가 수정되었다거나 변경되었다면 역직렬화를 할 수 없기 때문이다. 따라서 직렬화할 때 자동으로 serialVersionUID를 생성하여 정보를 저장한다. 그리고 역직렬화를 할 때 serialVersionUID를 비교하는데 만약 클래스 내용이 변경되었다면 클래스 버전이 맞지 않는다는 오류가 발생한다. 그런데 작은 변경에도 클래스 버전이 계속 바뀌면 네트워크로 서로 객체를 공유해서 일하는 경우에 매번 클래스를 새로 배포해야 하는 번거로움이 있다.
+이런 경우에 클래스의 버전 관리를 개발자가 할 수 있다. 자바에서 제공하는 자바 설치 경로의 bin\serialver.exe를 사용하면 serialVersionUID가 생성된다. 이 정보를 클래스 파일에 적어 주면 된다.
+이클립스에서는 이 기능을 자동으로 제공한다.
+
+import java.io.Serializable;//
+
+implements Serializable // 2 줄의 코드에 추가하고 아래를 하면 된다.
+
+Add generated serial version ID 선택
+
+만약 직렬화의 대상이 되는 클래스 정보가 바귀고 이를 공유해야 하는 경우에 버전 정보를 변경하면 된다.
+
+
+Externalizable 인터페이스
+
+직렬화하는 데 사용하는 또 다른 인터페이스는 Externalizable이다. Serializable 인터페이스는 자료를 읽고 쓰는 데 필요한 부분을 프로그래머가 따로 구현하지 않는다. 하지만 Externalizable 인터페이스는 프로그래머가 구현해야할 메서드가 있다. 객체의 직렬화와 역직렬화를 프로그래머가 직접 세밀하게 제어하고자 할 때, 메서드에 그 내용을 구현한다.
+
+
+
+import java.io.Externalizable;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+
+class Dog implements Externalizable {
+	String name;
+
+	public Dog() {}
+	
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		name = in.readUTF();
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		// TODO Auto-generated method stub
+		out.writeUTF(name);
+	}
+	
+	public String toString() {
+		return name;
+	}
+}
+
+public class ExternalizationTest {
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		Dog myDog = new Dog();
+		myDog.name = "멍멍이";
+		
+		try(FileOutputStream fos = new FileOutputStream("external.out");
+				ObjectOutputStream oos = new ObjectOutputStream(fos)){
+			oos.writeObject(myDog);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		FileInputStream fis = new FileInputStream("external.out");
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		
+		Dog dog = (Dog)ois.readObject();
+		System.out.println(dog);
+		
+	}
+}
+
+
+Externalizable 인터페이스를 구현하면 writeExternal() 메서드와 readExternal() 메서드를 구현해야 한다. 또한 복원할 때 디폴트 생성자가 호출되므로 디폴트 생성자를 추가해 주어야 한다. 읽고 쓰는 내용은 프로그래머가 직접 구현한다.
+
+
+
+
+그 외 입출력 클래스
+
+File 클래스
+파일이라는 개념을 추상화한 클래스이다. 파일 자체의 경로나 정보를 알 수 있고 파일을 생성할 수도 있다. 
+
+File 클래스의 생성자
+File(String pathname): pathname을 매개변수로 받아 파일을 생성한다.
+
+import java.io.File;
+import java.io.IOException;
+
+public class FileTest {
+	public static void main(String[] args) throws IOException {
+		File file = new File("D:\\course\\course\\java\\workspace\\chapter15");
+		file.createNewFile();
+		
+		System.out.println(file.isFile());
+		System.out.println(file.isDirectory());
+		System.out.println(file.getName());
+		System.out.println(file.getAbsolutePath());
+		System.out.println(file.getPath());
+		System.out.println(file.canRead());
+		System.out.println(file.canWrite());
+		
+		file.delete();
+	}
+}
+
+File 클래스를 생성했다고 실제 파일이 생성되는 것은 아니다. createNewFile() 메서드를 활용하여 파일을 생성한다. 그리고 File 클래스가 제공하는 메서드로 생성한 파일의 속성을 살펴볼 수 있다. delete() 메서드를 사용하여 파일을 삭제한다. 이렇게 생성한 파일은 FileInputStream과 같은 파일 입출력 기능을 제공하는 클래스의 생성자 매개변수로 사용할 수 있다.
+
+
+RandomAccessFile 클래스
+
+입출력 클래스 중 유일하게 파일 입출력을 동시에 할 수 있는 클래스이다. 지금까지 배운 스트림은 처음부터 차례로 자료를 읽었지만 RandomAccessFile은 임의의 위치로 이동하여 자료를 읽을 수 있다. RandomAccessFile에는 파일 포인터가 있는데, 현재 이 파일의 어느 위치에서 읽고 쓰는지 그 위치를 가리키는 속성이다.
+스트림을 생성하지 않고 간단하게 파일에 자료를 쓰거나 읽을 때 사용하면 유용하다. 파일 포인터가 이동하는 위치가 파일 자료를 읽거나 쓰이는 위치이므로 파일 포인터의 위치를 잘 생각하며 구현해야 한다.
+
+생성자
+
+RandomAccessFile(File file, String mode): 입출력을 할 File과 입출력 mode를 매개변수로 받는다. mode에는 읽기 전용 "r"과 읽고 쓰기 기능인 "rw"를 사용할 수 있다.
+
+RandomAccessFile(String file, String mode): 입출력을 할 파일 이름을 문자열로 받고 입출력 mode를 매개변수로 받는다. mode에는 읽기 전용 "r"과 읽고 쓰기 가능인 "rw"를 사용할 수 있다.
+
+RandomAccessFile은 임의의 위치에 읽거나 쓰는 기능 외에도 다양한 자료형 값을 읽거나 쓸 수 있다.
+
+파일에 자료를 읽거나 쓰면 파일 포인터가 이동한다. 처음 RandomAccessFile 클래스를 생성하면 파일 포인터 위치는 맨 앞, 즉 0의 위치를 가리킨다. int 값을 하나 쓰면 int 크기는 4바이트이므로 파일 포인터 위치가 4로 이동한다. 다시 말해 다음 자료를 읽거나 써야 할 위치로 계속 이동하는 것이 파일 포인터이다.
+
+쓰기가 끝난 후에 바로 read() 메서드를 호출하면 오류가 난다. 왜냐하면 파일 포인터의 위치가 파일의 끝에 있기 때문이다. 우리가 읽어야 할 파일 위치는 맨 처음인 0부터이다. 따라서 파일 포인터 위치를 이동해 주는 seek() 메서드를 활용하여 맨 처음으로 이동해야 한다. 자료를 읽기 전에 파일의 원하는 위치로 이동하여 차례로 값을 읽으면 된다. 자료를 읽어 올 때는 저장할 때 사용한 자료형에 맞는 메서드로 읽어야 한다.
+
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
+public class RandomAccessFileTest {
+	public static void main(String[] args) throws IOException {
+		RandomAccessFile rf = new RandomAccessFile("random.txt", "rw");
+		rf.writeInt(100);
+		System.out.println("파일 포인터 위치: " + rf.getFilePointer());
+		rf.writeDouble(3.14);
+		System.out.println("파일 포인터 위치: " + rf.getFilePointer());
+		rf.writeUTF("안녕하세요");
+		System.out.println("파일 포인터 위치: " + rf.getFilePointer());
+		
+		rf.seek(0);
+		System.out.println("파일 포인터 위치: " + rf.getFilePointer());
+		
+		int i = rf.readInt();
+		double d = rf.readDouble();
+		String str = rf.readUTF();
+		
+		System.out.println("파일 포인터 위치: " + rf.getFilePointer());
+		System.out.println(i);
+		System.out.println(d);
+		System.out.println(str);
+	}
+}
+
+
+
+자바에서 입출력 기능을 스트림 클래스로 제공하는 이유는 무엇인가?
+입출력 기능을 추상화하여 클래스로 제공함으로써 장치(하드웨어)에 독립적으로 프로그래밍할 수 있다.
+
+바이트로 읽어 들인 자료를 문자로 변환해 주는 스트림은 InputStreamReader
+
+다른 스트림을 감싸서 부가 기능을 제공하는 스트림은 보조 스트림이다.
+
+인스턴스 내용을 그대로 저장하거나 네트워크로 전송할 수 있도록 연속된 바이트로 만들고 이를 복원하는 기술은 직렬화이다.
+
+직렬화의 기술을 구현하기 위해 자바에서 사용하는 두 가지 인터페이스는 Serialization과 Externalization이다.
+
+
+
+
+
+
+
+정수를 입력받고 싶은 경우
+1. scan.nextInt()사용
+주의할점
+scan.nextInt()는 맨뒤의 엔터값은 빼고 앞의 값만 가져간다. 그래서 맨뒤의 엔터값이 남아있다.
+-> scan.nextLine()이나 scan.next()을 해주어야 한다. scan.next()나 scan.nextLine()은 엔터값을 포함한 모든 값을 다 받는다.
+
+2. nextLine()을 이용해서 값을 받은 후에 Integer.parseInt()를 통해 int형으로 변환해서 저장
+
+
+프로젝트 진행시 
+에러가 발생하거나 문제가 발생한 경우 정리할 것
+어떤 문제가 발생 -> 그 문제를 어떻게 해결 했는가? -> 무엇을 배웠는가?
+
+
+
+주요 실행 예외
+1. NullPointerException
+객체 참조가 없는 상태, 즉 null 값을 갖는 참조 변수로 객체 접근 연산자인 dot(.)를 사용했을 때 발생한다.
+
+2. ArrayIndexOutOfBoundsException
+배열에서 인덱스 범위를 초과하여 사용할 경우 발생
+
+3. NumberFormatException
+문자열로 되어 있는 데이터를 숫자로 변경하는 경우에 발생한다.
+
+4. ClassCastException
+형 변환은 부모 클래스와 자식 클래스간에 발생하고 구현 클래스와 인터페이스 간에도 발생한다. 이러한 관계가 아니라면 다른 클래스로 타입을 변환할 수도 없다.
+
+
+
+문자열을 int형으로 변환
+
+String s = "10";
+Integer.parseInt(s);
+
+
+
+
+인터페이스에 선언된 변수는 public static final을 생략하더라도 컴파일 과정에서 자동으로 추가된다.
+
+인터페이스에서 메서드를 추상메서드 형식으로 선언하면 abstract를 붙이지 않더라도 자동으로 컴파일 과정에서 추가된다.
+
+자바의 인터페이스는 객체의 사용 방법을 정의한 타입(메서드 명세서)으로 객체의 교환성을 높여주기 때문에 다형성을 구현하는 매우 중요한 역할을 한다.
+
+인터페이스는 다중 상속도 가능하다. 다중 구현도 가능하다.
+
+implements 키워드는 extends보다 뒤에 있어야 한다.
+
+
+추상클래스는 오버라이딩을 강제한다.
+인터페이스는 오버라이딩을 강제하고, 다중상속도 가능하다.
+
+추상클래스와 인터페이스 둘 다 인스턴스를 만들 수는 없다.
+인터페이스는 업캐스팅시에 선언은 가능하다.
 
 
 
