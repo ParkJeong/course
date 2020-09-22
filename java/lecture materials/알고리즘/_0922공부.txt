@@ -1,0 +1,186 @@
+main 메서드 실행 매개값을 주는 방법
+run 탭 -> run configuration -> arguments
+
+
+${string_prompt} <- 필요한 인자값을 받고 시작
+문자열 형태로 받는 것 같다. 스페이스로 띄우면 배열로 바뀐다.
+
+10 20 30
+
+class를 실행하고 보면 동일한 이름의 클래스일 때 숫자가 가장 높은 것이 가장 최근에 실행한 것이다.
+
+
+클래스에서 ctrl + t를 누르면 클래스의 상속관계를 알 수 있다.
+
+
+
+
+
+
+try ~ catch 구문이 예외가 발생했을 때 직접 해결을 하고자 하는 코드라면 throws는 메서드나 생성자를 호출한 곳으로 예외를 떠넘기는 코드이다. 즉 예외처리를 강요할 때 사용한다.
+
+즉 예외처리를 직접 수행하지 않고 메서드 호출자에게 예외를 던지는 방법이다.
+
+throws 키워드가 붙어있는 메서드는 반드시 try 블록 내부에서 호출되어야 한다. 그리고 catch블록에서 떠넘겨 받은 예외를 처리해야 한다.
+
+throws 키워드를 쓰고 예외가 발생하면 해당 메서드는 그 즉시 종료된다. 예외 정보를 가지고 리턴된다고 생각하면 된다.
+
+main도 throws를 사용할 수 있다.
+
+public static void main(String[] args) {
+	try {
+		greet(3);
+	} catch (Exception e) {
+		System.out.println("배열의 참조범위를 벗어났습니다.");
+	}
+}
+
+public static void greet(int index) throws Exception {
+	String[] greetings = {"안녕", "헬로", "니하오"};
+	System.out.println(greetings[index]);
+}
+
+
+대표적인 throws 메서드
+Class.forName("!@#");
+
+대표적인 throws 생성자
+FileInputStream("!@$");
+
+
+예외 강제 발생 시키기
+
+예외를 강제 발생시키며 메서드를 강제 종료한다. 예외 정보를 가지고 리턴된다고 생각. 해당 메서드를 호출한 코드의 에러메서지에 문자열이 같이 넘어간다.
+
+public static int calcSum(int n) throws Exception {
+	if(n <= 0) {
+		throw new Exception("매개변수값을 반드시 양수로 전달하세요").;
+	}
+	
+	int sum = 0;
+	for(int i = 1; i <= n; i++) {
+		sum += i;
+	}
+	
+	return sum;
+}
+
+
+
+try {
+	System.out.println("결과: " + calc(10));
+	System.out.println("결과: " + calc(-10));
+} catch (Exception e) {
+	System.out.println(e);
+	System.out.println(e.getMessage());
+}
+
+e.getMessage() <- 예외 발생시 전달할 예외 메시지를 얻어오는 기능.
+e.printStackTrace() <- 예외의 경로를 추적하는 메시지를 출력한다.(예외의 원인을 찾을 때 매번 사용한다.)
+
+
+
+
+
+JAVA API(Application Programming Interface)
+API는 라이브러리라고 부르며 프로그램 개발에 자주 사용되는 클래스 및 인터페이스의 모음을 말한다. 미리 만들어져 있는 기능
+
+자바 표준 API 문서 주소: https://docs.oracle.com/javase/8/docs/api
+
+좌측 상단에서 원하는 패키지를 찾고 좌측 하단에서 원하는 것을 클릭한다.
+
+구글링에만 의존하지말고 표준 문서를 보는 습관을 들여라.
+
+
+java.lang 패키지
+java.lang 패키지는 자바 프로그램의 기본적인 클래스들을 담고 있는 패키지이다.
+
+
+
+Object 클래스
+클래스를 선언할 때 extends 키워드로 다른 클래스를 상속하지 않으면 묵시적으로 Object 클래스를 상속하게 된다.따라서 모든 자바의 클래스는 Object의 클래스의 자식이거나 자손 클래스이다.
+
+/*
+ * Object 클래스 (최상위 부모)
+ * - equals() :  동일 객체인지 확인
+ * - hashCode() : 객체의 숫자값
+ * - toString() : 객체 자체를 문자열의 형태로 반환(오버라이딩해서 많이 사용)
+ * - clone() : 객체 복사
+ * - getClass() : 현재 실행되는 클래스를 반환
+ * - finallize() : 객체가 소멸되기 전에 실행
+ */
+
+
+public class Person implements Cloneable{
+	// 오버라이딩
+	// 객체복사 메서드
+	// protected이기 때문에, 사용시 오버라이딩을 통해 생성해야 한다.
+	// 또한 Cloneable 인터페이스를 구현해서 사용해야 한다.
+	@Override
+	protected Object clone() throws CloneNotSupportedException{
+		return super.clone();
+	}
+	
+	// 객체 소멸시에 호출됨 
+	@Override
+	protected void finalize() throws Throwable {
+		System.out.println(this.name + "소멸했다");
+	}
+}	
+
+System.gc(); // 가비지 컬렉터 실행, 램덤하게 실행한다
+
+
+System 클래스
+운영체제의 일부 기능을 이용할 수 있다. 프로그램 종료, 키보드로 입력, 모니터로 출력, 메모리 정리, 현재 시간 읽기 등이 가능하다.
+System 클래스의 모든 멤버는 static으로 구성되어 있어 클래스 이름으로 바로 접근이 가능하다.
+
+System 클래스 주요 메서드
+
+exit(): 현재 실행하고 있는 프로세스를 강제 종료시킨다. 정상 종료일 경우 매개값으로 0을 주고, 비정상 종료인 경우 0 이외에 다른 값을 준다.
+
+currentTimeMillis(): 컴퓨터의 시계로부터 현재 시간을 읽어서 밀리세컨드(1/1000초) 단위와 나노 세컨드 단위(1/10^9초)와 long값을 리턴한다. 주로 프로그램의 실행 소요 시간 측정으로 성능을 테스트할 때 사용한다.
+
+getProperty(): JVM이 시작할 때 자동 설정되는 시스템의 속성값을 구한다.
+
+gc(): Garbage Collector를 실행시킨다.
+
+
+
+String 클래스 - 문자열
+
+주요 메서드
+charAt(): 특정 인덱스의 글자를 리턴
+
+indexOf(): 특정 문자열의 시작 인덱스 값을 반환한다. 만약 주어진 문자열이 포함되어 있지 않으면 -1을 리턴한다.
+
+length(): 문자열의 길이를 알려준다.
+
+replace(): 특정 문자열을 변경한다.
+
+substring(): 인덱스를 기준으로 그 앞의 문자열을 잘라준다. 만약 매개값으로 인덱스를 2개 주면 처음 매개값 이상 두 번째 매개값 미만의 문자열을 제외하고 나머지를 삭제한다.
+
+toUpperCase(): 문자열을 대문자로 치환한다.
+
+toLowerCase(): 문자열을 소문자로 ㅊ;환한다.
+
+trim(): 문자열의 앞, 뒤 공백을 제거한다.
+
+equals(): 문자열의 값을 비교한다.
+
+valueOf(): 기본 데이터 타입의 값들을 문자열로 변환한다.
+
+split(): 특정 문자열 기준으로 잘라서 배열에 리턴한다.
+
+
+
+
+
+
+스트림
+3개가 있다. 입력, 출력, 에러
+
+
+
+
+
