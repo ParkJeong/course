@@ -1,0 +1,183 @@
+
+String 클래스 - 문자열
+
+주요 메서드
+charAt(): 특정 인덱스의 글자를 리턴
+
+indexOf(): 특정 문자열의 시작 인덱스 값을 반환한다. 만약 주어진 문자열이 포함되어 있지 않으면 -1을 리턴한다.
+
+length(): 문자열의 길이를 알려준다.
+
+replace(): 특정 문자열을 모두 변경한다.
+
+String str4 = "자바의 유래를 아시나요? 자바는 커피집 이름입니다.";
+String str5 = str4.replace("자바", "java");// java의 유래를 아시나요? java는 커피집 이름입니다.
+
+
+substring(): 인덱스를 기준으로 그 앞의 문자열을 잘라준다. 만약 매개값으로 인덱스를 2개 주면 처음 매개값 이상 두 번째 매개값 미만의 문자열을 제외하고 나머지를 삭제한다.
+
+String str6 = "123123-456456";
+String str7 = str6.substring(1,2); // 2
+str7 = str6.substring(5);// 3-456456
+
+toUpperCase(): 문자열을 대문자로 치환한다.
+
+toLowerCase(): 문자열을 소문자로 치환한다.
+
+trim(): 문자열의 앞, 뒤 공백을 제거한다.
+
+String str9 = "  hello, world!!   ";
+
+equals(): 문자열의 값을 비교한다.
+
+valueOf(): 기본 데이터 타입의 값들을 문자열로 변환한다.
+
+System.out.println("String.valueOf(123) == \"123\" : " + String.valueOf(123).equals("123"));
+
+split(): 특정 문자열 기준으로 잘라서 배열에 리턴한다.
+
+String str10 = "010--1234-5678";
+String[] arr2 = str10.split("-"); // [010, , 1234, 5678]
+arr2 = str10.split("-",2); // [010, -1234-5678] <- 요소의 개수를 2개로 제한
+arr2 = str10.split("-",3); // [010, , 1234-5678] <- 요소의 개수를 3개로 제한
+
+
+str.replace("자바", "java").replace(" ", "");
+위의 코드처럼 쓸 수도 있다. 반환값의 유형에 따라 연속적으로 호출이 가능하다.
+
+
+String 클래스의 단점
+
+String 클래스는 아주 많이 쓰이고 좋은 기능들을 많이 가지고 있지만 메모리를 과소비한다는 문제점이 있다.
+
+String 객체는 처음 초기화된 데이터에 변화가 생기면 기존 객체를 재활용하지 않고 새로운 객체를 생성한다.
+
+StringBuilder
+String 클래스의 단점인 새로운 객체를 생성하는 문제로 인해 속도가 느려지는 현상이 발생하기 때문에 이 문제를 해결하기 위해 속도적인 측면에서 개선된 클래스이다.
+
+
+Math 클래스
+
+Math클래스는 수학 계산에 사용할 수 있는 메서드들을 제공한다.
+Math클래스가 제공하는 메서드는 모두 정적 메서드이므로 Math 클래스 이름으로 바로 사용이 가능하다.
+
+abs(): 절댓갑을 구함
+
+ceil(): 올림값을 구함
+
+floor(): 내림값을 구함
+
+max(): 수를 비교하여 최댓값을 구함.
+
+min(): 수를 비교하여 최솟값을 구함
+
+random(): 랜덤값을 구함(0.0 <= 값 < 1.0)
+
+rint(): 현재 수에서 가까운 정수를 실수형태로 구함
+
+round(): 반올림값을 구함.
+
+
+
+
+Wrapper 클래스
+
+자바는 기본 타입의 값을 갖는 객체를 생성할 수 있다.
+
+이러한 객체를 포장(Wrapper) 객체라고 하는데 그 이유는 기본 타입의 값을 객체 내부에 두고 포장하기 때문이다.
+
+포장 객체의 특징은 포함하고 있는 기본 타입의 값은 외부에서 변경할 수 없다. 만약 변경하고 싶으면 새로운 포장 객체를 생성해야 한다.
+
+Byte, Short, Character, Integer, Long, Float, Double, Boolean
+
+기본 타입의 값을 포장 객체로 만드는 과정을 박싱이라 하며 포장 객체에서 기본 타입의 값을 얻어내는 과정을 언박싱이라 한다.
+
+문자열을 기본 타입 값으로 변환할 때도 많이 사용한다. 대부분의 포장 클래스는 "parse+기본타입"명으로 되어 있는 static 메서드를 제공한다.
+
+String s1 = "10";
+String s2 = "5.43";
+
+int a = Integer.parseInt(s1);
+double b = Double.parseDouble(s2);
+float c = Float.parseFloat(s2);
+
+실제 Wrapper 클래스는 문자열->기본형으로 바꾸는데 많이 사용된다. 반드시 기억!
+
+
+
+
+API-java.util 패키지
+
+Arrays 클래스
+배열 조작 기능을 가지고 있다. 배열의 복사, 항목 정렬, 항목 검색과 같은 기능을 말한다.
+
+Arrays 클래스의 모든 메서드는 정적 메서드이므로 클래스이름으로 바로 사용이 가능하다.
+
+주요 메서드
+
+binarySearch(배열, 찾는 값): 전체 배열 항목에서 찾는 값이 있는 인덱스를 리턴
+
+copyOf(원본 배열, 복사할 길이): 원본 배열의 0번 인덱스부터 복사할 길이만큼의 인덱스까지 복사한 배열을 리턴
+
+int[] arr = {1, 2, 3, 4, 5}
+int[] arrCpy1 = Arrays.copyOf(arr, arr.length);
+int[] arrCpy2 = Arrays.copyOf(arr, 3);
+
+copyOfRange(원본 배열, 시작 인덱스, 끝 인덱스): 원본 배열의 시작 인덱스에서 끝 인덱스까지 복사한 배열 리턴, 시작 인덱스는 포함되지만 끝 인덱스는 포함되지 않음
+
+sort(배열): 배열의 전체 항목을 오름차순으로 정렬
+
+toString(배열): 배열의 값들을 "[값1, 값2, ...]"와 같은 문자열 형식으로 리턴
+
+equals(배열1, 배열2): 배열의 요소가 같은지 확인
+
+
+
+Date 클래스
+
+Date 클래스는 날짜를 표현하는 클래스이다. 객체 간에 날짜 정보를 주고받을 때 주로 사용한다.
+
+Date 객체를 기본생성자로 생성하면 컴퓨터의 현재 날짜를 읽어 객체로 만든다.
+
+Date 클래스의 toString()메서드는 영문으로 된 날짜를 문자열로 리턴하는데 만약 특정 문자열 포맷으로 얻고 싶다면 java.text 패키지의 SimpleDateFormat 클래스를 이용하면 된다.
+
+
+String log = "2020.09.23, /bno=30, user=홍길동";
+		
+		// 공백을 기준으로 토큰을 나눈다.
+		StringTokenizer token = new StringTokenizer(log);
+		
+		while(token.hasMoreTokens()) {
+			System.out.println(token.nextToken());
+		}
+		System.out.println("----------------------------");
+		// 토큰의 개수
+		System.out.println(token.countTokens());
+		// ,을 기준으로 토큰을 나눈다.
+		StringTokenizer token1 = new StringTokenizer(log, ",");
+		
+		while(token1.hasMoreTokens()) {
+			System.out.println(token1.nextToken());
+		}
+		System.out.println("----------------------------");
+		// ,도 토큰화시킨다.
+		StringTokenizer token2 = new StringTokenizer(log, ",", true);
+		
+		while(token2.hasMoreTokens()) {
+			System.out.println(token2.nextToken());
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

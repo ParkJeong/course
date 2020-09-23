@@ -1,13 +1,11 @@
 package api.lang.object;
 
-import exception.multicatch.Animal;
-
 class Human {
 	protected void move() {}
 	public void eat( ) {}
 }
 
-public class Person extends Animal implements Cloneable{
+public class Person implements Cloneable{
 	private String name;
 
 	public Person(String name) {
