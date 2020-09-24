@@ -1,0 +1,137 @@
+StringTokenizer를 이용하면 다양한 구분자로 구분이 가능하다.
+구분자가 1개인 경우 split()메서드를 쓰는 것도 좋다.
+
+구분자를 입력하지 않으면 기본값은 " " 스페이스 1개이다.
+StringTokenizer token = new StringTokenizer(str);
+StringTokenizer token = new StringTokenizer(str, ",. ");
+
+
++해당 클래스의 자바 공식문서를 보고 싶다면 f1을 눌러라.
+
+
+
+Date 클래스
+
+Date는 2가지가 있다. java.sql패키지에 있는 것과 java.util패키지에 있는 것
+
+여기서는 java.util패키지에 있는 것 사용
+
+Date 클래스는 날짜를 표현하는 클래스이다. 객체 간에 날짜 정보를 주고받을 때 주로 사용한다.
+
+Date 객체를 기본생성자로 생성하면 컴퓨터의 현재 날짜를 읽어 객체로 만든다.
+
+Date 클래스의 toString() 메서드는 영문으로 된 날짜를 문자열로 리턴하는데 만약 특정 문자열 포맷으로 얻고 싶다면 java.text 패키지의 SimpleDateFormat 클래스를 이용하면 된다.
+
+
+SimpleDateFormat
+
+SimpleDateFormat 클래스는 날짜를 원하는 형식으로 표현하기 위한 클래스이다. java.text 패키지에 구성되어 있는 API이다.
+
+패턴을 사용하여 생성자의 매개값으로 표현형식을 지정하여 객체를 생성한 후 format() 메서드를 호출하여 패턴이 적용된 문자열을 얻을 수 있다.
+
+
+public static void main(String[] args) {
+	Date date = new Date();
+	
+	System.out.println(date.toString());
+	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일 hh시 mm분 ss초");
+	String now = sdf.format(date);
+	System.out.println(now);
+	System.out.println("---------------------------------");
+	
+	sdf.applyPattern("yyyyMMdd");
+	String now2 = sdf.format(date);
+	System.out.println(now2);
+	System.out.println("---------------------------------");
+	
+	sdf.applyPattern("오늘은 E요일입니다. 오늘은 1년 중 D번째 날입니다.");
+	String now3 = sdf.format(date);
+	System.out.println(now3);
+	System.out.println("---------------------------------");
+}
+
+
+import java.util.Calender;
+// Calendar 컴퓨터 운영체제에 있는 달력관련 기능을 사용
+// Calendar cal = new Calendar(); 싱글톤 패턴이다.
+
+
+
+Random 클래스
+
+Random 클래스는 난수를 얻어내기 위한 다양한 메서드를 제공하며 Math 클래스의 random() 메서드보다 다양한 난수 값을 얻을 수 있게 해준다.
+
+Random 클래스 주요 메서드
+
+nextBoolean(): boolean 타입의 난수를 리턴 (true of false)
+nextDouble(): double 타입의 난수를 리턴(0.0 <= ~ < 1.0)
+nextInt(): int타입 난수를 리턴(int범위)
+nextInt(int n): int타입 난수를 리턴(0<= ~ < n)
+
+
+
+제네릭
+제네릭이란 클래스나 인터페이스 선언에 유형 매개변수가 들어있는 클래스를 뜻한다.
+제네릭 타입은 클래스 또는 인터페이스 이름 뒤에 <>부호가 붙고, 그 사이에 파라미터가 위치한다.
+
+?
+와일드 카드
+어떤 타입이라도 들어갈 수 있다.
+
+public class Generic {
+	// List<?> - 타입 상관없이 무엇이든 들어갈 수 있다.
+	// List<? extends String> 
+	// -> String과 String의 자식클래스는 전달가능.
+	// List<? super Integer>
+	// -> Integer의 형태를 가지고 있다면, 전달가능.
+	
+	public static void add(List<?> list) {
+		
+	}
+	
+	public static void add2(List<? extends String> list) {
+		
+	}
+
+	public static void add3(List<? super Integer> list) {
+		
+	}
+	
+	public static void main(String[] args) {
+		List<String> list1 = new ArrayList<>();
+		List<Integer> list2 = new ArrayList<>();
+		List<Object> list3 = new ArrayList<>();
+
+		add(list1);
+		add(list2);
+		add(list3);
+		
+		add2(list1);
+		//add2(list2); // String이거나 String의 자식타입이 아니기 때문에 x
+		//add2(list3); // String이거나 String의 자식타입이 아니기 때문에 x
+		
+		//add3(list1); // Integer이거나 Integer의 부모타입이 아니기 때문에 x
+		add3(list2);
+		add3(list3);
+	}
+}
+
+
+
+
+Collection Framework
+
+
+
+
+
+
+
+
+
+
+
+
+
+

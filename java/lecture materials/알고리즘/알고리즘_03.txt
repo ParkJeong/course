@@ -218,4 +218,74 @@ Comparator 인터페이스와 compare 메서드를 구현한 클래스를 먼저
 
 comparator의 사용방법
 
+binarySearch 메서드의 세 번째 매개변수로 클래스 X의 클래스 변수인 X.COMPARATOR를 전달하면 된다. 호출된 binarySearch 메서드는 전달받은 comparator를 기준으로 배열 요소의 대소 관계를 판단하여 이진 검색을 수행한다.
+
+
+static class PhyscData {
+	private String name;
+	private int height;
+	private double vision;
+	
+	public PhyscData(String name, int height, double vision) {
+		this.name = name;
+		this.height = height;
+		this.vision = vision;
+	}
+	
+	@Override
+	public String toString() {
+		return name + " " + height + " " + vision;
+	}
+	
+	public static final Comparator<PhyscData> HEIGHT_ORDER
+	 = new HeightOrderComparator();
+	
+	private static class HeightOrderComparator implements Comparator<PhyscData> {
+		@Override
+		public int compare(PhyscData d1, PhyscData d2) {
+			return (d1.height > d2.height) ?  1 :
+				   (d1.height < d2.height) ? -1 : 0;
+		}
+	}
+}
+	
+public static void main(String[] args) {
+	int idx = Arrays.binarySearch(arr, new PhyscData("",height,0.0), PhyscData.HEIGHT_ORDER);
+}
+
+
+제네릭은 처리해야 할 대상의 자료형에 의존하지 않는 클래스 구현 방식이다. 제네릭 클래스는 자료형에 의존하지 않기 때문에 범용으로 사용할 수 있다. 또한 Java에서 지원하는 기능이므로 안전한 방법으로 사용할 수 있다. 제네릭 클래스는 클래스 이름 바로 뒤에 <Type> 같은 형식의 파라미터를 붙여 선언한다. 기본 자료형은 지정할 수 없다. 참조 자료형만 가능 
+
+class 클래스_이름 <파라미터> {
+	...
+}
+
+interface 인터페이스_이름 <파라미터> {
+	...
+}
+
+class 클래스_이름 <파라미터1, 파라미터2, ...> {
+	...
+}
+
+interface 인터페이스_이름 <파라미터1, 파라미터2, ...> {
+	...
+}
+
+이렇게 정의된 클래스나 인터페이스는 매개변수로 정의한 '자료형'을 전달받을 수 있다.
+파라미터 이름을 작성하는 방법
+1. 1개의 대문자를 사용
+2. 컬렉션의 자료형은 element의 앞글자인 E를 사용한다.
+3. Map의 키, 값은 key와 value의 앞글자인 K와 V를 사용한다.
+4. 일반적으로는 T를 사용한다.
+
+<? extends T>: 클래스 T의 서브 클래스를 전달 받는다
+<? super T>: 클래스 T의 슈퍼 클래스를 전달 받는다.
+
+
+
+
+
+
+
 

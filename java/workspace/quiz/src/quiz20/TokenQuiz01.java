@@ -24,7 +24,7 @@ public class TokenQuiz01 {
 		System.out.println("문장입력>");
 		String sentence = stdIn.nextLine();
 		
-		StringTokenizer token = new StringTokenizer(sentence, " ");
+		StringTokenizer token = new StringTokenizer(sentence);
 		
 		String[] arr = new String[token.countTokens()];
 		
