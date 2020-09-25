@@ -46,6 +46,9 @@ public class ArrayListQuiz03 {
 				if(!isFound) {
 					System.out.println(name + "님은 목록에 없습니다.");
 				}
+				
+				
+				
 				// 찾을 이름을 입력받고, 이름이 있다면 이름, 나이를 출력한다.
 				// 찾는 이름이 없으면 ~~님은 목록에 없습니다를 출력
 			} else if(menu == 4) {

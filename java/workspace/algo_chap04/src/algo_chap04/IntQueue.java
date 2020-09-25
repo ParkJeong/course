@@ -60,6 +60,58 @@ public class IntQueue {
 		return x;
 	}
 	
+	public int peek() throws EmptyIntQueueException{
+		if(isEmpty()) {
+			throw new EmptyIntQueueException("큐가 비었습니다");
+		}
+		return que[front];
+	}
+	
+	public int indexOf(int x) {
+		for(int i = 0; i < num; i++) {
+			int index = (front + i) % max;
+			if(que[index] == x) {
+				return index;
+			}
+		}
+		return -1;
+	}
+	
+	public void clear() {
+		num = 0;
+		front = 0;
+		rear = 0;
+	}
+	
+	public int capacity() {
+		return max;
+	}
+	
+	public int size() {
+		return num;
+	}
+	
+	public void dump() {
+		if(isEmpty()) {
+			System.out.println("큐가 비었습니다.");
+		} else {
+			for(int i = 0; i < num; i++) {
+				int index = (front + i) % max;
+				System.out.print(que[index] + " ");
+			}
+			System.out.println();
+		}
+	}
+	
+	public int search(int x) {
+		for(int i = 0; i < num; i++) {
+			int index = (front + i) % max;
+			if(que[index] == x) {
+				return i + 1;
+			}
+		}
+		return 0;
+	}
 	
 	public boolean isEmpty() {
 		return num <= 0;

@@ -1,0 +1,131 @@
+재귀
+어떤 사건이 자기 자신을 포함하고 다시 자기 자신을 사용하여 정의될 때 재귀적(recursive)이라고 한다.
+
+음이 아닌 정수의 팩토리얼(n!)
+1. 0! = 1
+2. n > 0이면 n! = n * (n-1)!
+
+public class Factorial {
+	static int factorial(int n) {
+		if(n > 0) {
+			return n * factorial(n-1);
+		}
+		return 1;
+	}
+}
+
+public int Factorial2(int n) {
+		int fact = 1;
+		while(n > 1){
+			fact *= n--;
+		}
+		return fact;
+	}
+
+
+
+위와 같은 메서드 호출 방식을 재귀 호출(recursive call)이라고 한다.
+
+
+직접 재귀
+자신과 같은 메서드를 호출하면 직접(direct) 재귀이다.
+
+간접(indirect) 재귀
+메서드 a가 메서드 b를 호출하고 다시 메서드 b가 메서드 a를 호출하는 구조
+
+
+유클리드 호제법
+두 정수의 최대공약수(greatest common divisor)를 재귀적으로 구하는 방법
+
+두 정수를 변의 길이로 하는 직사각형을 만든다.
+직사각형을 정사각형으로 완전히 채운다. 정사각형으로만 구성되었을 때 가장 작은 정사각형의 변의 길이가 최대 공약수이다.
+-> 두 정수가 주어졌을 때 큰 값을 작은 값으로 나누었을 때 나누어떨어지는 가장 작은 값이 최대공약수이다.
+
+
+public class EuclidGCD {
+	static int gcd(int x, int y) {
+		if(y == 0)
+			return x;
+		else
+			return gcd(y, x % y);
+	}
+}
+
+public int gcd(int x, int y) {
+	while(y != 0) {
+		int temp = y;
+		y = x % y;
+		x = temp;
+	}
+	return x;
+}
+
+static int gcdArray(int a[], int start, int no) {
+	if (no == 1)
+		return a[start];
+	else if (no == 2)
+		return gcd(a[start], a[start + 1]);
+	else
+		return gcd(a[start], gcdArray(a, start + 1, no - 1));
+}
+
+
+
+재귀 알고리즘 분석
+
+재귀 호출을 여러 회 실행하는 메서드를 순수하게 재귀적이라 하며, 실제 동작은 매우 복잡하다. 이런 복잡한 구조를 가진 재귀 메서드는 좀 더 전략적으로 분석해야 한다.
+static void recur(int n) {
+	if(n > 0) {
+		recur(n - 1);
+		System.out.println(n);
+		recur(n - 2);
+	}
+}
+
+
+1. 하향식 분석(top-down analysis)
+가장 위쪽에 위치한 메서드 호출부터 시작해 계단식으로 자세히 조사하는 분석 기법
+
+매개변수 n으로 4를 전달하면 recur 메서드는 아래 과정을 순서대로 실행한다.
+1. recur(3)을 실행
+2. 4를 출력
+3. recur(2)를 실행
+
+여기서는 recur(1), recur(2)의 호출이 여러 번있다. 같은 호출이 여러 번 있다. 꼭대기부터 분석하면 이렇게 같은 메서드의 호출이 여러 번 나올 수 있기 때문에 하향식 분석이 반드시 효율적이다라고 말할 수는 없다.
+
+
+2. 상향식 분석(bottom-up analysis)
+아래쪽부터 쌓아 올리며 분석하는 방법이다.
+
+recur메서드는 n이 양수일 때만 실행하므로 먼저 recur(1)을 생각해보자.
+
+recur(1)이 수행하는 작업은 다음과 괕다.
+1. recur(0)을 실행
+2. 1을 출력
+3. recur(-1)을 실행
+
+여기서 1의recur(0)과 3의 recur(-1)은 출력할 내용이 없다. 따라서 2의 1만 출력한다.
+
+그럼 recur(2)에 대해 생각해 보자.
+1.recur(1)을 실행
+2.2를 출력
+3.recur(0)을 실행
+
+1의 recur(1)은 1을 출력하고 3의 recur(0)은 출력할 내용이 없다.전체 과정을 거치면 1과 2가 출력된다.
+이 작업을 recur(4)까지 쌓아 올리면 다음과 같다.
+
+recur(-1): 아무것도 하지 않음
+recur(0): 아무것도 하지 않음
+recur(1): recur(0) 1 recur(-1) -> 1
+recur(2): recur(1) 2 recur(0) -> 1 2
+recur(3): recur(2) 3 recur(1) -> 12 3 1
+recur(4): recur(3) 4 recur(2) -> 1231 4 12
+
+
+
+
+
+
+
+
+

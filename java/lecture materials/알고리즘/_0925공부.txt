@@ -1,0 +1,202 @@
+LinkedList
+
+set
+순서가 없고 중복을 허용하지 않는다.
+인덱스로 객체를 검색하는 기능이 없고 전체 객체를 대상으로 한번씩 반복해서 객체의 값을 가져오는 반복자(iterator)를 제공한다.
+
+iterator의 주요 메서드
+
+hasNext(): 가져올 객체가 있으면 true를 리턴하고 없으면 false를 리턴
+next(): 컬렉션에서 하나의 객체를 가져옴
+remove(): set 컬렉션에서 객체를 제거함
+
+
+Map 계열 컬렉션
+Map 컬렉션은 키와 값으로 구성된 Entr객체를 저장하는 구조를 가지고 있다. 키는 중복저장 될 ㅜㅅ 없지만 값은 중복저장 될 수 있다.
+
+
+
+스트림은 데이터의 흐름을 말한다.
+데이터가 들어오면 입력스트림이다.
+데이터가 나가면 출력스트림이다.
+
+
+public static void main(String[] args) {
+	/*
+	 * 1. 파일을 읽어들이는데 사용하는 클래스 FileInputStream이다.
+	 * 2, 생성자에 매개값으로 읽어들일 파일의 전체경로를 적는다.
+	 */
+	
+	try(FileInputStream fis = new FileInputStream("D:\\course\\course\\java\\file\\asdasd.txt")){
+//		int i = 0;
+//		
+//		while((i = fis.read()) != -1) {
+//			System.out.print((char)i);				
+//		}
+		byte[] arr = new byte[100];
+		int result = fis.read(arr);
+	
+		int i = 0;
+		while(arr[i] != 0) {
+			System.out.print((char)arr[i++]);
+		}
+		
+	} catch(IOException e) {
+		
+	}
+		
+}
+
+
+OutputStream 클래스
+OutputStream은 바이트 기반 출력 스트림의 최상위 클래스로 추상 클래스이다.
+
+OutputStream 주요 메서드
+
+1. write(byte b): 출력 스트림으로 1바이트를 내보낸다.
+2. write(byte[] b): 출력 스트림으로 주어진 바이트 배열 b의 모든 바이트들을 내보냄.
+
+
+public static void main(String[] args) {
+	/*
+	 * 1. FileOutputStream은 파일을 쓸 때 사용하는 클래스이다.
+	 * 2. 생성자 매개값으로 파일을 쓸 전체 경로를 지정한다.
+	 */
+	
+	Scanner stdIn = new Scanner(System.in);
+	System.out.print("파일명>");
+	String name = stdIn.next();
+	
+	try(FileOutputStream fos = new FileOutputStream("D:\\course\\course\\java\\file\\" + name + ".txt")) {
+						
+		System.out.print("문장을 입력하세요>");
+//		stdIn.nextLine(); // next() 다음에 nextLine()을 쓰려면
+				  // 그냥 넘어가버리는 문제가 있기 때문에 엔터값을 제거
+		String str = stdIn.nextLine();
+			
+		fos.write(str.getBytes());
+	} catch (FileNotFoundException e) {
+	} catch (IOException e) {
+		
+	} 
+		
+		
+}
+
+
+public static void main(String[] args) {
+	try(FileInputStream fis = new FileInputStream("pic.png");
+		FileOutputStream fos = new FileOutputStream("picCopy2.png")){
+		
+		int i = 0;
+		byte[] arr = new byte[100];
+		while((i = fis.read(arr)) != -1) {
+			fos.write(arr);
+		}
+	} catch(IOException e) {
+		System.out.println(e);
+	}
+}
+
+
+
+문자 기반 스트림 클래스
+Input/OutputStream은 1바이트 단위로 입/출력 동작을 수행하지만 한글의 경우 2바이트이기 때문에 바이트 단위 처리시 글자가 깨질 수 있다.
+
+이러한 문제점을 없애기 위해 자바에서는 문자나 문자열을 다룰 때 유니코드 방식을 제공하고 있다.
+
+유니코드를 사용하는 입/출력 클래스를 Reader와 Writer라고 부르며, 이들을 사용하면 자동으로 바이트가 유니코드화 되므로 한글 같은 2바이트 문자도 정상적으로 처리할 수 있다.
+
+Writer
+이 클래스는 텍스트 파일을 프로그램으로 쓸 때 사용하는 문자 기반 스트림이다.
+
+public static void main(String[] args) {
+	
+	/*
+	 * 문자를 써서 저장할 때 사용하는 클래스 FileWriter 클래스이다.
+	 * 기본적으로 2바이트 단위로 처리하기 때문에 문자를 쓰기에 적합하다.
+	 */
+	
+	try(FileWriter fw = new FileWriter("text.txt")){
+		String str = "오늘은 9월 25일 입니다~\n아 금요일이다.\n집에가야지";
+		
+		fw.write(str);
+		
+		System.out.println("파일이 정상적으로 저장되었습니다.");
+		
+	} catch(IOException e) {
+		
+	}
+}
+
+
+Reader
+이 클래스는 텍스트 파일을 프로그램으로 읽을 때 사용하는 문자 기반 스트림이다.
+문자 단위로 읽고 쓰기 때문에 텍스트가 아닌 그림, 오디오, 비디오 등의 파일은 읽거나 쓸 수 없다.
+
+public static void main(String[] args) {
+	/*
+	 * 문자기반으로 읽어들이는 클래스는 FileReader 클래스이다.
+	 * 2바이트 단위로 읽고 쓰기 때문에 문자를 쓰기에 적합하다.
+	 */
+	
+	try(FileReader fr = new FileReader("text.txt")){
+		int i = 0;
+		while((i = fr.read()) != -1) {
+			System.out.print((char)i);
+		}
+	} catch(IOException e) {
+		System.out.println(e);
+	}
+}
+
+
+
+public static void main(String[] args) {
+	/*
+	 * 자바에서 외부경로로 폴더를 생성할 때는 File 클래스를 사용하면 된다.
+	 * 생성자 매개변수로 폴더를 생성할 경로 + 폴더명을 지정한다.
+	 */
+	
+	try{
+		File file = new File("test_folder");
+		
+		if(!file.exists()) { // 해당파일이 존재하면 true, 존재하지 않으면 false
+			file.mkdir(); // 파일 생성
+			System.out.println("폴더생성완료");
+		} else {
+			System.out.println("해당 폴더가 존재합니다.");
+		}
+	} catch(Exception e) {
+		System.out.println(e);
+	}
+}
+
+
+
+public static void main(String[] args) {
+	try {
+		File file = new File("test_folder");
+			if(file.exists()) {//폴더가 존재하면 삭제
+			if(file.delete()) {
+				System.out.println("폴더를 삭제했습니다.");
+			}else {
+				System.out.println("폴더 삭제 실패했습니다.");
+			}
+		}else {
+			System.out.println("폴더가 없습니다.");
+		}
+	} catch(Exception e) {
+		System.out.println(e);
+	}
+}
+
+
+
+
+
+
+
+
+
+
