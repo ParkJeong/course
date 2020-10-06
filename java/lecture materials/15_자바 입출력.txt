@@ -578,7 +578,7 @@ ObjectInputStream(InputStream in): InputStream을 생성자의 매개변수로 받아 Object
 
 ObjectOutputStream(OutputStream out): OutputStream을 생성자의 매개변수로 받아 ObjectOutputStream을 생성한다.
 
-저장할 파일이나 전송할 네트워크 등의 기반 스트림늘 매개변수로 받아서 인스턴스 변수 값을 저장하거나 전송한다.
+저장할 파일이나 전송할 네트워크 등의 기반 스트림을 매개변수로 받아서 인스턴스 변수 값을 저장하거나 전송한다.
 ex
 Person 클래스의 생성자로 두 인스턴스를 생성한다.
 이를 serial.out 파일에 저장한다.(직렬화)
