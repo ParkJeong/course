@@ -209,5 +209,10 @@ static void move(int no, int x, int y) {
 분할 정복법 divide and conquer
 문제를 세분된 작은 문제의 풀이를 결합해 전체 문제를 풀이하는 기법
 
+필요하지 않은 분기를 없애 불필요한 조합을 줄이는 방법을 한정(bounding)조작이라한다.
+
+가지 뻗기와 한정 조작을 조합하여 문제를 풀어 가는 방법을 분기 한정법(branching and bounding method)라고 한다.
+
+
 
 
