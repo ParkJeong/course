@@ -59,11 +59,34 @@ public class BubbleSort {
 
 알고리즘 개선(1)
 어떤 패스에서 요소의 교환 횟수가 0이면 더 이상 정렬할 요소가 없다는 뜻이기 때문에 정렬 작업을 멈추면 된다.
-
+static void bubbleSort(int[] arr, int n) {
+	for(int i = 0; i < n - 1; i++) {
+		int exchg = 0;
+		for(int j = n - 1; j > i; j--) {
+			if(arr[j - 1] > arr[j]) {
+				swap(arr, j - 1, j);
+				exchg++;
+			}
+		}
+		if(exchg == 0) break;
+	}
+}
 
 알고리즘 개선(2)
 
-
+static void bubbleSort(int[] arr, int n) {
+	int k = 0;
+	while(k < n - 1) {
+		int last = n - 1;
+		for(int j = n - 1; j > k; j--) {
+			if(arr[j - 1] > arr[j]) {
+				swap(arr, j - 1, j);
+				last = j;
+			}
+		}
+		k = last;
+	}
+}
 
 
 
