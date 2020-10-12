@@ -1,0 +1,39 @@
+-- 형변환 함수 TO_CHAR, TO_NUMBER, TO_DATE
+
+-- 날짜를 문자로 TO_CHAR(날짜, 형식)
+
+--날짜 FMT 형식은 대문자로 표기
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH:MI:SS')
+FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD HH24:MI')
+FROM DUAL;
+
+-- 날짜 FMT형식이 아니라서 사용이 불가능한 경우 ""묶어서 표현
+SELECT TO_CHAR(SYSDATE, 'YYYY"년" MM"월" DD"일" HH"시" MI"분" SS"초"')
+FROM DUAL;
+
+SELECT FIRST_NAME, TO_CHAR(HIRE_DATE, 'YYYY"년" MM"월" DD"일"')
+FROM EMPLOYEES;
+
+
+-- 숫자를 문자로 TO_CHAR(숫자, 형식)
+-- 9는 자리수의 표현
+SELECT TO_CHAR(20000, '999999999900000')
+FROM DUAL;
+
+-- 자리수가 부족한 경우 #으로 표현된다.
+SELECT TO_CHAR(20000, '9')
+FROM DUAL;
+
+SELECT TO_CHAR(20000.21, '99999')
+FROM DUAL;
+-- $ , . 도 숫자에서 사용가능한 FMT 형식이다.
+SELECT TO_CHAR(SALARY, '$99999')
+FROM EMPLOYEES;
+
+
+
