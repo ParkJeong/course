@@ -1,0 +1,67 @@
+/*문제 2.
+사원 테이블에서 입사 년도 별 사원 수를 구하세요.
+*/
+SELECT TO_CHAR(HIRE_DATE, 'YY'), COUNT(*)
+  FROM EMPLOYEES
+GROUP BY TO_CHAR(HIRE_DATE, 'YY')
+ORDER BY TO_CHAR(HIRE_DATE, 'YY');
+
+
+조인
+
+내부 조인 inner join
+
+INNER 생략 가능
+조인되지 않은 행은 안나온다.
+
+SELECT * 
+  FROM INFO
+JOIN USER
+    ON INFO.USER_ID = USER.USER_ID
+
+
+SELECT * 
+  FROM INFO
+INNER JOIN USER
+    ON INFO.USER_ID = USER.USER_ID
+
+
+
+외부 조인
+LEFT OUTER
+조인되지 않은 행은 안나온다. 그러나 왼쪽 테이블에 존재하는 행이라면 조인되지 않더라도 나온다. 없는 데이터는 NULL처리
+
+SELECT * 
+  FROM INFO
+LEFT OUTER JOIN USER
+    ON INFO.USER_ID = USER.USER_ID
+
+
+  
+RIGHT OUTER
+조인되지 않은 행은 안나온다. 그러나 오른쪽 테이블에 존재하는 행이라면 조인되지 않더라도 나온다. 없는 데이터는 NULL처리
+
+SELECT * 
+  FROM INFO
+RIGHT OUTER JOIN USER
+    ON INFO.USER_ID = USER.USER_ID
+
+
+FULL OUTER
+양쪽 행을 기준으로 모두 조인되서 나온다. 조인되지 않은 행은 NULL값으로 채워져서 나온다.
+SELECT * 
+  FROM INFO
+FULL OUTER JOIN USER
+    ON INFO.USER_ID = USER.USER_ID
+
+
+
+CROSS JOIN
+왼쪽 테이블의 각 행과 오른쪽 테이블의 각 행을 조인시킨다.
+왼쪽 테이블의 행 개수 * 오른쪽 테이블의 행 개수 = CROSS JOIN TABLE의 행 개수
+잘못된 형태의 조인의 결과(Cartition Product)
+
+
+-- 조인이 3개 테이블도 가능하다. 키 값만 찾아서 구문을 연결해서 쓰면 된다.
+
+

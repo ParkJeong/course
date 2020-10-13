@@ -1,0 +1,522 @@
+-- 오라클 주석입니다.
+-- 실행은 ctrl + enter
+
+select * from employees;
+
+select first_name, last_name from employees;
+
+select email, phone_number, hire_date from employees;
+
+-- 칼럼을 조회하는 위치에서 + - * / 연산이 가능하다.
+
+select salary * 1.1 from employees;
+
+--null값 확인
+select * from employees;
+select department_id, commission_pct, manager_id from employees;
+
+select first_name 이름 from employees;
+
+--||연결자
+/*
+ 오라클 홑따옴표가 문자를 표현하기 때문에,
+ 문자열안에 '를 표현하고 싶다면 '' 두번 쓰면 된다.
+*/
+SELECT first_name || ' ' || last_name || '''s salary is $' || salary
+FROM employees;
+
+-- DISTINCT
+SELECT DISTINCT department_id FROM employees;
+
+SELECT ROWID, ROWNUM, employee_id, first_name
+FROM employees;
+
+
+
+
+
+
+
+
+
+--lower - (소문자), upper - (대문자), initcap - (첫글자 대문자)
+SELECT  'abcDEF',lower('abcDEF'), upper('abcDEF'), initcap('abcDEF') FROM DUAL;
+
+SELECT  * FROM employees;
+select last_name, lower(last_name), UPPER(last_name), INITCAP(last_name) from employees;
+select last_name from employees where lower(last_name) = 'bull'; --where 조건에도 함수의 적용이 가능
+
+--length() - 길이, instr - 문자검색
+select first_name , LENGTH(first_name) as 길이, instr(first_name , 'a') as 포함위치 from employees;
+select length('abc'), instr('abcdefg', 'a') from dual;
+
+--substr() - 문자열자르기, concat() - 문자열붙이기
+select substr('abcdef',1,3), concat('abc','def') from dual;
+select first_name, substr(first_name,1,3), concat(first_name, last_name) from employees;
+
+-- LPAD, RPAD - 좌우측 지정 문자열로 채우기
+select lpad('abc',10,'*') from dual;
+select rpad('abc',10,'*') from dual;
+select lpad(first_name, 10 ,'-'), rpad(first_name,10,'-') from employees;
+
+-- LTRIM, RTRIM, TRIM - 공백제거, 문자제거
+select ltrim('javascript_java', 'java') from dual; --왼쪽에서 java문자 제거
+select rtrim('javascript_java', 'java') from dual; --오른쪽에서 java문자 제거
+select trim('   java    ') from dual; --양측 공백제거
+SELECT TRIM(' JAVA      '), LTRIM(' JAVA      '), RTRIM(' JAVA      ')
+FROM DUAL;
+
+--REPLACE - 문자열 치환
+select 'my dream is president', replace('my dream is president','president','programmer') from dual;
+select replace('my dream is president',' ','')from dual;
+select ltrim(replace(replace('my dream is president','president','programmer'),' ',''),'my') from dual;
+
+SELECT FIRST_NAME, SALARY
+FROM EMPLOYEES
+WHERE JOB_ID = 'IT_PROG';
+
+SELECT LAST_NAME, LOWER(LAST_NAME), INITCAP(LOWER(LAST_NAME)), UPPER(LAST_NAME)
+FROM EMPLOYEES;
+
+SELECT LAST_NAME, LOWER(LAST_NAME), INITCAP(LAST_NAME), UPPER(LAST_NAME)
+FROM EMPLOYEES
+WHERE LOWER(LAST_NAME) = 'austin';
+
+SELECT FIRST_NAME, LENGTH(FIRST_NAME), INSTR(FIRST_NAME, 'a')
+FROM EMPLOYEES;
+
+
+
+/*
+조건 1) 비교하기 위한 값은 소문자로 입력해야 합니다.(힌트 : lower 이용)
+*/
+SELECT FIRST_NAME, SALARY
+FROM EMPLOYEES
+WHERE LOWER(JOB_ID) = 'it_prog';
+
+/*
+조건 2) 이름은 앞 3문자까지 출력하고 나머지는 *로 출력합니다.
+이 열의 열 별칭은 name입니다.(힌트 : rpad와 substr 또는 substr 그리고 length 이용)
+*/
+SELECT RPAD(SUBSTR(FIRST_NAME, 1, 3), LENGTH(FIRST_NAME), '*') AS NAME, FIRST_NAME
+FROM EMPLOYEES;
+
+/*
+조건 3) 급여는 전체 10자리로 출력하되 나머지 자리는 *로 출력합니다.
+이 열의 열 별칭은 salary입니다.(힌트 : lpad 이용)
+*/
+
+SELECT RPAD(SUBSTR(FIRST_NAME, 1, 3), LENGTH(FIRST_NAME), '*') AS NAME, RPAD(SALARY, 10, '*') AS SALARY
+FROM EMPLOYEES
+WHERE LOWER(JOB_ID) = 'it_prog';
+
+
+/*
+문제 1.
+EMPLOYEES 테이블 에서 이름, 입사일자 컬럼으로 변경해서 이름순으로 오름차순 출력 합니다.
+조건 1) 이름 컬럼은 first_name, last_name을 붙여서 출력합니다.
+조건 2) 입사일자 컬럼은 xx/xx/xx로 저장되어 있습니다. xxxxxx형태로 변경해서 출력합니다.
+*/
+SELECT CONCAT(FIRST_NAME,LAST_NAME) AS 이름, 
+        REPLACE(HIRE_DATE, '/', '') AS 입사일자
+FROM EMPLOYEES
+ORDER BY 이름;
+
+SELECT *
+FROM EMPLOYEES;
+/*
+문제 2.
+EMPLOYEES 테이블 에서 phone_numbe컬럼은 ###.###.####형태로 저장되어 있다
+여기서 처음 세 자리 숫자 대신 서울 지역변호 (02)를 붙여 전화 번호를 출력하도록 쿼리를 작성하세요
+*/
+SELECT CONCAT('(02)', SUBSTR(PHONE_NUMBER, 4, LENGTH(PHONE_NUMBER))) AS PHONE_NUMBER, PHONE_NUMBER
+FROM EMPLOYEES;
+
+/*
+문제 3.
+EMPLOYEES 테이블에서 JOB_ID가 it_prog인 사원의 이름(first_name)과 급여(salary)를 출력하세요.
+조건 1) 비교하기 위한 값은 소문자로 입력해야 합니다.(힌트 : lower 이용)
+조건 2) 이름은 앞 3문자까지 출력하고 나머지는 *로 출력합니다.
+이 열의 열 별칭은 name입니다.(힌트 : rpad와 substr 또는 substr 그리고 length 이용)
+조건 3) 급여는 전체 10자리로 출력하되 나머지 자리는 *로 출력합니다.
+이 열의 열 별칭은 salary입니다.(힌트 : lpad 이용)
+*/
+SELECT RPAD(SUBSTR(FIRST_NAME, 1, 3),LENGTH(FIRST_NAME),'*') AS NAME,
+    LPAD(SALARY, 10, '*') AS SALARY
+FROM EMPLOYEES
+WHERE LOWER(JOB_ID) = 'it_prog';
+
+/*
+기억하기
+ROUND - 반올림
+TRUNC - 자르기
+
+*/
+
+
+
+
+
+--숫자 함수
+--ROUND - 반올림, -TRUNC - 절삭
+
+SELECT ROUND(34.145), ROUND(34.145, 2), ROUND(34.145, 1), ROUND(34.145, 0), ROUND(35.145, -1)
+FROM DUAL;
+
+SELECT TRUNC(34.145), TRUNC(34.145, 2), TRUNC(34.145, 1),
+    TRUNC(34.145), TRUNC(34.145, -1)
+FROM DUAL;
+
+--날짜 함수
+/*
+SYSDATE는 현재의 날짜를 반환하는 함수다.
+SYSTIMESTAMP는 현재의 날짜와 시간을 반환하는 함수이다.
+DUAL은 SYSDATE를 보기 위해 사용된 DUMMY 테이블이다.
+
+DUAL이라는 더미 테이블로부터 SYSDATE를 선택하는 것이 관례이다.
+
+년/월/일 시:분:초(ms단위) 
+
+날짜는 숫자와 연산이 가능하다.
+날짜 + 숫자 -> 날짜 (일(DAY)수를 날짜에 더한다.)
+날짜 - 숫자 -> 날짜 (날짜에서 일(DAY)수를 뺀다.)
+날짜 + 숫자/24 -> 날짜 (시간을 날짜에 더한다.)
+
+날짜 - 날짜 -> 일수 (어떤 날짜에서 다른 날짜를 뺀다.)
+*/
+SELECT SYSDATE, SYSTIMESTAMP 
+FROM DUAL;
+
+SELECT SYSDATE + 3
+FROM DUAL;
+
+SELECT SYSDATE - 3
+FROM DUAL;
+
+SELECT SYSDATE - HIRE_DATE
+FROM EMPLOYEES;
+
+
+SELECT (SYSDATE - HIRE_DATE) / 7
+FROM EMPLOYEES;
+
+SELECT (SYSDATE - HIRE_DATE) / 365
+FROM EMPLOYEES;
+
+
+--날짜 반올림, 절삭
+SELECT TRUNC(SYSDATE - HIRE_DATE)
+FROM EMPLOYEES;
+
+-- 특정 포맷형식으로 날짜 절삭
+-- 년 기준으로 절삭
+SELECT TRUNC(SYSDATE, 'YEAR')
+FROM DUAL;
+
+-- 월 기준으로 절삭
+SELECT TRUNC(SYSDATE, 'MONTH')
+FROM DUAL;
+
+-- 일 기준으로 절삭(해당주의 일요일)
+SELECT TRUNC(SYSDATE, 'DAY')
+FROM DUAL;
+
+
+/*
+CHAR 고정형 문자열
+VARCHAR2 가변형 문자열
+NUMBER -> CHARACTER : TO_CHAR
+CHARACTER -> NUMBER : TO_NUMBER
+CHARACTER -> DATE : TO_DATE
+DATE -> CHARACTER : TO_CHAR
+*/
+
+SELECT FIRST_NAME, TO_CHAR(HIRE_DATE, 'D/DD/DDD/MM/YY') AS MONTH_HIRED
+FROM EMPLOYEES
+WHERE FIRST_NAME = 'Steven';
+
+SELECT FIRST_NAME,
+    TO_CHAR(HIRE_DATE, 'YYYY"년" MM"월" DD"일"') AS HIREDATE
+FROM EMPLOYEES;
+
+SELECT TO_CHAR(1234, '99099999')
+FROM DUAL;
+
+SELECT RTRIM(' HELLO WORLD JAVA ')
+FROM DUAL;
+
+-- 문자를 숫자로 TO_NUMBER(문자, 형식)
+-- 자동 형변환
+SELECT '2000' + 2000, 2000, '2000'
+FROM DUAL;
+
+-- 명시적 형변환
+SELECT TO_NUMBER('2000') + 2000
+FROM DUAL;
+
+-- 문자형이 $ , 같은 특정 문자를 지니고 있을 때는 자동 형변환이 불가능하다.
+SELECT '$2000' + 2000
+FROM DUAL;
+
+-- 숫자 FMT이 지원하는 형식을 가진 경우, 명시적 형변환이 가능하다.
+SELECT TO_NUMBER('$2000', '$9999') + 2000
+FROM DUAL;
+
+-- 문자를 날짜로 TO_DATE(문자, 형식)
+-- 이런 경우는 바로 사용이 가능하다.
+SELECT TO_DATE('2020-03-31')
+FROM DUAL;
+
+-- 날짜 FMT를 이용해서 변경도 가능
+SELECT TO_DATE('2020-12-12', 'YY/MM/DD')
+FROM DUAL;
+
+-- 날짜 FMT이 지원하는 형식을 가진 경우, 형변환이 가능
+SELECT TO_DATE('2020-03-21 12:23:03', 'YYYY-MM-DD HH:MI:SS')
+FROM DUAL;
+
+-- NVL(데이터, NULL일 경우 처리할 값)
+-- NVL 값이 NULL일 경우 원하는 값으로 바꾼다.
+-- NVL(EXPR1, EXP2)
+-- EXPR1 : NULL을 포함할 수 있는 값이나 표현식. NULL이 아니면 해당 값을 출력
+-- EXPR2 : NULL 변환을 위한 목표 값이다. EXPR1이 NULL일 경우 출력된다.
+
+SELECT FIRST_NAME,
+       SALARY,
+       SALARY + SALARY * NVL(COMMISSION_PCT, 0) AS ANN_SAL
+FROM EMPLOYEES;
+-- NULL연산이 들어가는 경우 NULL값이 나오게 된다.
+
+/*
+NVL2(데이터, NULL이 아닌 경우 처리, NULL인 경우 처리)
+NVL2(EXPR1, EXPR2, EXPR3)
+NVL2 함수는 EXPR1의 값이 NULL이 아닐 경우에는 EXPR2의 값을 반환하고
+NULL일 경우에는 EXPR3의 값을 반환한다.
+*/
+SELECT NVL2(NULL, '널아님', '널')
+FROM DUAL;
+
+
+SELECT FIRST_NAME,
+       NVL2(COMMISSION_PCT, SALARY + (SALARY * COMMISSION_PCT),
+       SALARY) AS ANN_SAL
+FROM EMPLOYEES;
+
+
+/*
+DECODE 함수는 여러 언어에서 사용하는 IF-THEN-ELSE 구문과
+유사한 방법으로 표현식을 해독한다.
+DECODE 함수는 EXPRESSION을 해독한 후 각각의 SEARCHN에 대해
+비교한다.
+표현식의 결과가 SEARCHN과 같으면 RESULTN이 반환된다.
+기본값이 생략되면 검색 값이 결과 값과 일치하지 않는 곳에
+NULL 값이 반환된다.
+DECODE(COLUMN OR EXPRESSION, SEARCH1, RESULT1,
+                             [SEARCH2, RESULT2, ...,]
+                             [DEFAULT])
+*/
+-- DECODE(데이터, 비교값, 결과, 비교값, 결과)
+SELECT DECODE('C', 'A', 'A입니다',
+                   'B', 'B입니다',
+                   'C', 'C입니다',
+                        'A,B,C가 아닙니다')
+FROM DUAL;
+
+
+SELECT JOB_ID, SALARY,
+       DECODE(JOB_ID, 'IT_PROG',    SALARY * 1.10,
+                      'FI_MGR',     SALARY * 1.15,
+                      'FI_ACCOUNT', SALARY * 1.20,
+                                    SALARY)
+        AS REVISED_SALARY
+ FROM EMPLOYEES;
+ 
+/*
+CASE ~ WHERN ~ THEN 구문
+자바 언어의 IF~ELSE 문 또는 SWITCH ~ CASE 문과 같은 기능을 한다.
+CASE 절 뒤에 표현식이 있을 경우 WHEN 절에는 값이 오며,
+CASE 절 뒤에 아무것도 없을 경우 WHEN 절에 조건식이 온다.
+
+CASE COLUMN OR EXPRESSION WHEN CONDITION1 THEN RESULT1
+                          WHEN CONDITION2 THEN RESULT2
+                          ...
+                          WHEN CONDITIONN THEN RESULTN
+                          ELSE RESULT
+END
+*/
+SELECT JOB_ID, SALARY,
+  CASE JOB_ID WHEN 'IT_PROG'     THEN SALARY * 1.10
+              WHEN 'FI_MGE'      THEN SALARY * 1.15
+              WHEN 'FI_ACCOUNT'  THEN SALARY * 1.20
+              ELSE SALARY
+   END AS REVISED_SALARY
+  FROM EMPLOYEES;
+  
+SELECT JOB_ID, SALARY,
+  (CASE WHEN JOB_ID = 'IT_PROG'    THEN SALARY * 1.10
+       WHEN JOB_ID = 'FI_MGR'     THEN SALARY * 1.15
+       WHEN JOB_ID = 'FI_ACCOUNT' THEN SALARY * 1.20
+       ELSE SALARY
+   END) AS REVISED_SALARY
+ FROM EMPLOYEES;
+ 
+ 
+ 
+/*
+TO_CHAR
+TO_DATE
+
+NVL
+NVL2
+
+DECODE
+CASE WHEN THEN
+*/
+       
+
+
+
+
+*/
+/* WHERE에서는 별칭을 통한 접근이 불가능하다.
+-- 새로운 테이블을 만들어서 가져와야 한다.
+-- WHERE에서의 조건식은 가능하면 연산식이 아닌 값을 넣도록 하자.
+-- EX WHERE (GRADE * 10 - 4) > 5는 WHERE GRADE > 0.9로 고쳐쓰자
+
+SELECT  - (4)
+FROM    - (0)
+WHERE   - (1)
+GROUP BY- (2)
+HAVING  - (3)
+ORDER BY- (5)
+WHERE절은 ALIAS로 변경된 별칭을 인지하지 못한다.
+별칭의 인식은 GROUP BY절 이후부터 가능하다.
+*/
+
+
+
+
+
+-- 형변환 함수 TO_CHAR, TO_NUMBER, TO_DATE
+
+-- 날짜를 문자로 TO_CHAR(날짜, 형식)
+
+--날짜 FMT 형식은 대문자로 표기
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH:MI:SS')
+FROM DUAL;
+
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD HH24:MI')
+FROM DUAL;
+
+-- 날짜 FMT형식이 아니라서 사용이 불가능한 경우 ""묶어서 표현
+SELECT TO_CHAR(SYSDATE, 'YYYY"년" MM"월" DD"일" HH"시" MI"분" SS"초"')
+FROM DUAL;
+
+SELECT FIRST_NAME, TO_CHAR(HIRE_DATE, 'YYYY"년" MM"월" DD"일"')
+FROM EMPLOYEES;
+
+
+-- 숫자를 문자로 TO_CHAR(숫자, 형식)
+-- 9는 자리수의 표현
+SELECT TO_CHAR(20000, '999999999900000')
+FROM DUAL;
+
+-- 자리수가 부족한 경우 #으로 표현된다.
+SELECT TO_CHAR(20000, '9')
+FROM DUAL;
+
+SELECT TO_CHAR(20000.21, '99999')
+FROM DUAL;
+-- $ , . 도 숫자에서 사용가능한 FMT 형식이다.
+SELECT TO_CHAR(SALARY, '$99999')
+FROM EMPLOYEES;
+
+
+
+
+
+
+
+
+
+
+GROUP BY, HAVING
+
+-- 그룹 함수 AVG, MAX, MIN, SUM, COUNT
+SELECT AVG(SALARY),
+       SUM(SALARY),
+       MIN(SALARY),
+       MAX(SALARY),
+       COUNT(*)
+  FROM EMPLOYEES;
+  
+-- COUNT(*) 해당 테이블의 데이터 개수
+SELECT COUNT(*)
+  FROM EMPLOYEES;
+
+
+-- 그룹함수는 일반 칼럼과 동시에 사용이 불가능하다.
+-- 그룹 절에 묶인 칼럼만 SELECT절에서 이용 가능하다.
+SELECT DEPARTMENT_ID, SUM(SALARY)
+  FROM EMPLOYEES;
+  
+  
+-- 칼럼 값중에 NULL값이 아닌 데이터의 개수
+SELECT COUNT(FIRST_NAME)
+  FROM EMPLOYEES;
+
+-- GROUP BY절을 이용한 그룹핑
+-- GROUP BY절은 WHERE절 다음에 들어간다.
+SELECT DEPARTMENT_ID, SUM(SALARY)
+  FROM EMPLOYEES
+GROUP BY DEPARTMENT_ID
+ORDER BY DEPARTMENT_ID;
+
+SELECT DEPARTMENT_ID, SUM(SALARY), AVG(SALARY), COUNT(*)
+  FROM EMPLOYEES
+GROUP BY DEPARTMENT_ID
+ORDER BY DEPARTMENT_ID;
+
+
+-- 2개 이상의 그룹화
+SELECT DISTINCT DEPARTMENT_ID, JOB_ID
+  FROM EMPLOYEES
+ORDER BY DEPARTMENT_ID;
+
+-- WHERE절에는 그룹함수를 사용할 수 없다.
+
+/*
+WHERE 절은 처음에 가져올 테이블에서 행을 뽑을 때의 조건을 설정하는 것이다.
+GROUP BY 절의 조건 HAVING
+GROUP BY 절로 묶은 그룹에 대한 조건식 HAVING
+*/
+
+SELECT DEPARTMENT_ID, ROUND(AVG(SALARY),2)
+  FROM EMPLOYEES
+GROUP BY DEPARTMENT_ID
+HAVING AVG(SALARY) > 8000;
+
+SELECT DEPARTMENT_ID,
+       SUM(SALARY),
+       COUNT(*)
+  FROM EMPLOYEES
+ WHERE SALARY >= 15000
+GROUP BY DEPARTMENT_ID
+ORDER BY DEPARTMENT_ID;
+
+--GROUP BY 절의 조건 HAVING
+SELECT DEPARTMENT_ID,
+       SUM(SALARY)
+  FROM EMPLOYEES
+GROUP BY DEPARTMENT_ID
+HAVING SUM(SALARY) >= 8000
+ORDER BY DEPARTMENT_ID;
+
+SELECT JOB_ID, COUNT(*)
+  FROM EMPLOYEES
+GROUP BY JOB_ID
+--HAVING COUNT(*) >= 20
+ORDER BY JOB_ID;
