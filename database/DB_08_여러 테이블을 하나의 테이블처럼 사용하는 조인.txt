@@ -45,9 +45,85 @@ SELECT절에서 출력할 열을 *로 표현하면 어떤 열이 어떤 순서�
 데카르트 곱 현상이 일어나지 않게 하는 데 필요한 조건식의 최소 개수는 조인 테이블 개수에서 하나를 뺀 값이다.
 
 
-2.비등가 조인
+2.비등가 조인 non-equal join
+열의 일치 여부를 기준으로 테이블을 조인하는 등가 조인 방식으로 안되는 경우
+
+SELECT *
+  FROM EMP E, SALGRADE S
+ WHERE E.SAL BEWEEN S.LOSAL AND S.HISAL;
 
 
+3.자체 조인 self join
+
+특정 데이터 작업이 한 번씩 더 발생한다는 것은 제공할는 서비스 품질에 꽤 치명적일 수 있다. 단순 계산으로 생각해도 해당 작업의 효율이 두 배나 떨어지기 때무이다. 반복 작업 횟수 증가는 응용프로그램 동작 효율에 악영향을 미친다. 따라서 이러한 상황은 반드시 피해야 한다.
+
+자체 조인은 하나의 테이블을 여러 개의 테이블처럼 활용하여 조인하는 방식이다.
+자체 조인은 FROM절에 같은 테이블을 여러 번 명시하되 테이블의 별칭만 다르게 지정하는 방식으로 사용한다.
+큰 범위로는 등가 조인으로 볼 수 있다.
+
+
+
+4.외부 조인
+두 테이블간 조인 수행에서 각 조인 기준 열의 어느 한쪽이 NULL이어도 강제로 출력하는 방식을 외부 조인(OUTER JOIN)이라고 한다.
+
+외부 조인은 좌우를 따로 나누어 지정하는데 WHERE절에 조인 기준 열 중 한쪽에 (+)기호를 붙여 준다.
+
+왼쪽 외부 조인(Left Outer Join): WHERE TABLE1.COL1 = TABLE2.COL1(+)
+오른쪽 외부 조인(Right Outer Join): WHERE TABLE1.COL1(+) = TABLE2.COL1
+
+왼쪽 외부 조인
+SELECT E1.EMPNO, E1.ENAME
+  FROM EMP E1, EMP E2
+ WHERE E1.MGR = E2.EMPNO(+);
+
+
+오른쪽 외부 조인
+SELECT E1.EMPNO, E1.ENAME
+  FROM EMP E1, EMP E2
+ WHERE E1.MGR(+) = E2.EMPNO;
+
+전체 외부 조인은 왼쪽 외부 조인을 사용한 SELECT문과 오른쪽 외부 조인을 사용한 SELECT문을 UNION으로 합쳐서 같은 효과를 낼 수 있다.(+)기호를 사용한 방식으로는 전체 외부 조인을 구현할 수 없다.
+
+
+
+SQL-99 표준 문법으로 배우는 조인
+ISO/ANSI에서 관계형 데이터베이스 표준언어로 지정(SQL-82)되었다.
+
+다른 DBMS 제품에서도 사용할 수 있다.
+
+NATUAL JOIN
+등가 조인을 대신해 사용할 수 있는 조인 방식
+
+SELECT *
+  FROM AUTH A NATURAL JOIN INFO I;
+
+SELECT *
+  FROM AUTH A, INFO I
+ WHERE A.USER_ID = I.USER_ID;
+
+SELECT *
+  FROM AUTH A
+INNER JOIN INFO I
+ON A.USER_ID = I.USER_ID;
+
+
+NATURAL JOIN은 자동으로 공통 열을 기준으로 등가 조인된다. 조인 기준 열은 SELECT절에 명시할 때 테이블 이름을 붙이면 안된다.
+
+
+JOIN~USING
+USING 키워드에 조인 기준으로 사용할 열을 명시하여 사용한다. 조인 기준 열은 SELECT절에 명시할 때 테이블 이름을 붙이면 안된다.
+
+JOIN~ON
+ON 키워드에 조인 기준으로 사용할 열을 명시하여 사용한다.
+
+OUTER JOIN
+LEFT OUTER JOIN~ON
+RIGHT OUTER JOIN~ON
+FULL OUTER JOIN~ON
+
+세 개 이상의 테이블을 조인할 때
+JOIN~ON
+JOIN~ON
 
 
 

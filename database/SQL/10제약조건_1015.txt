@@ -1,0 +1,87 @@
+NOT NULL: NULL 값이 들어갈 수 없도록 하는 제약 조건
+
+UNIQUE: 고유한 값만 갖도록 하는 제약 조건
+
+PRIMARY KEY = NOT NULL + UNIQUE KEY
+
+CHECK: 특정 값만 들어가게 하는 제약 조건
+
+
+
+
+1. 열 레벨 제약조건
+테이블 생성시에 열마다 제약조건을 건다.
+
+CREATE TABLE 테이블_이름(
+	열_이름 열_자료형 CONSTRAINT 제약조건_이름 제약조건,
+	열_이름 열_자료형 CONSTRAINT 제약조건_이름 제약조건
+);
+제약조건_이름은 '테이블이름_열이름_제약조건약어'형식으로 이름을 짓는다.
+FK의 경우 '테이블이름_열이름_참조할테이블이름_참조할키이름(참조할테이블의 기본키)_fk'형식으로 이름을 짓는다.그리고 REFERENCES 테이블명(열이름)을 써주어야한다. 그리고 자료형을 참조하는 열과 같게 만들어야한다.
+
+
+약어
+CHECK -> CK
+PRIMARY KEY -> PK
+FOREIGN KEY -> FK
+제약조건_이름은 생략이 가능하다. 생략하는 경우 랜덤하게 이름이 생김
+
+
+-- 테이블 생성과 제약조건
+/*
+열레벨 제약조건(PK, FK, NOT NULL, CHECK, UNIQUE)
+1. PK - 테이블 고유 식별 칼럼(NOT NULL + UNIQUE)
+PRIMARY KEY
+2. UNIQUE = 유일한 값을 갖게하는 칼럼(중복데이터의 방지)
+3. NOT NULL - NULL을 허용하지 않는다.
+4. FK - 참조하는 테이블의 PK를 저장하는 칼럼
+FOREIGN KEY
+5. CHECK - 정의된 형식만 들어오도록 허용
+
+*/
+
+CREATE TABLE DEPT (
+    DEPT_NO NUMBER(2) CONSTRAINT DEPT_DEPT_NO_PK PRIMARY KEY,
+    DEPT_NAME VARCHAR2(14) NOT NULL UNIQUE,
+    LOCA NUMBER(4) REFERENCES LOCATIONS(LOCATION_ID),
+    -- 아무것도 지정하지 않으면 기본으로 지금시간을 지정
+    DEPT_DATE DATE DEFAULT SYSDATE,
+    DEPT_BONUS NUMBER(10),
+    DEPT_GENDER CHAR(1) CHECK(DEPT_GENDER IN ('F','M'))
+);
+
+
+
+
+
+
+2. 테이블 레벨 제약조건
+
+3. 
+ALTER TABLE
+ADD CONSTRAINTS
+
+
+/*
+테이블 레벨 제약조건(모든 열을 선언한 후에 아래쪽에 제약조건 추가)
+NOT NULL이나 DEFAULT는 나중에 지정이 안된다.
+같이 지정해야한다.
+
+제약조건 추가 
+제약조건 제약조건_이름 제약조건_종류 적용칼럼
+*/
+;
+CREATE TABLE DEPT(
+    DEPT_NO NUMBER(2),
+    DEPT_NAME VARCHAR(14) NOT NULL,
+    LOCA NUMBER(4),
+    DEPT_DATE DATE DEFAULT SYSDATE,
+    DEPT_BONUS NUMBER(10),
+    DEPT_GENDER CHAR(1),
+    CONSTRAINT DEPT_DEPT_NO_PK PRIMARY KEY (DEPT_NO),
+    CONSTRAINT DEPT_DEPT_NAME_UK UNIQUE (DEPT_NAME),
+    CONSTRAINT DEPT_DEPT_GENDER_CK CHECK (DEPT_GENDER IN ('F', 'M')),
+    CONSTRAINT DEPT_LOCA_LOCATION_LOCATION_ID_FK 
+        FOREIGN KEY (LOCA) REFERENCES LOCATIONS(LOCATION_ID)  
+);
+

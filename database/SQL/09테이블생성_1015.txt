@@ -1,0 +1,67 @@
+파일을 데이터베이스에 저장하지 않는다?
+
+
+
+
+DDL
+Data Definition Language
+
+
+
+
+테이블 생성(CREATE TABLE)
+
+---- 테이블 생성----
+CREATE TABLE DEPT (
+    DEPTNO  NUMBER(2, 0), --2자리 저장, 실수는 저장하지 않는다.
+    DNAME   VARCHAR2(14), --BYTE기반 가변 문자열, 
+    LOC     VARCHAR2(13),
+    DEPT_DATE DATE,
+    DEPT_BONUS NUMBER(10)
+);
+
+
+
+
+테이블 구조 변경(ALTER TABLE)
+
+--- 테이블 수정 ALTER TABLE----
+ALTER TABLE DEPT
+ADD DEPT_COUNT NUMBER(3); -- 추가
+
+ALTER TABLE DEPT
+MODIFY DEPT_COUNT NUMBER(10); -- 수정
+
+ALTER TABLE DEPT
+RENAME COLUMN DEPT_COUNT TO EMP_COUNT; -- 칼럼명 변경
+
+ALTER TABLE DEPT
+DROP COLUMN EMP_COUNT; -- 삭제
+
+
+
+
+
+테이블 삭제(DROP TABLE)
+
+
+-- 테이블 삭제
+DROP TABLE DEPT;
+-- 해당 테이블에 FK제약조건이 들어있더라도 삭제를 진행.
+DROP TABLE CASCADE CONSTRAINTS 제약조건명; 
+
+
+
+
+테이블 데이터 비우기(TRUNCATE)
+
+사용하지 말 것/
+
+--테이블 데이터 전부 삭제
+TRUNCATE TABLE DEPT;
+
+
+
+
+
+

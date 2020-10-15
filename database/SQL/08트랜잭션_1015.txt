@@ -1,0 +1,71 @@
+트랜잭션은 논리적인 작업의 단위이다.
+트랜잭션은 분리되어서는 안 될 작업의 단위이다.
+트랜잭션의 시작은 실행 가능한 첫 번째 SQL 문장이 실행 될 때 시작한다.
+트랜잭션은 COMMIT 이나 ROLLBACK 문에 의해 명시적으로 종료하거나, DDL이나 DCL 문장 실행으로 자동 커밋되어 종료될 수 있다.
+사용자의 데이터베이스 종료 또는 시스템 충돌에 의한 데이터베이스 비정상적 종료에 의해 트랜잭션이 종료되어 변경사항이 취소될 수 있다.
+
+
+자동적인 커밋 발생
+
+- CREATE 같은 DDL 문장이 완료될 때
+- DCL 문장이 완료될 때
+- 사용자가 SQL PLUS를 정상적으로 종료할 때
+
+자동적인 롤백 발생
+- SQL PLUS가 비정상적으로 종료할 때
+- 머신 실패나 시스템 충돌에 의한 데이터베이스가 비정상적으로 종료될 때
+-> 마지막으로 커밋된 시점으로 상태를 되돌린다. SQL은 테이블의 무결성을 보호한다.
+
+COMMIT과 ROLLBACK을 이용하면 다음 장점을 제공한다.
+- 데이터의 일관성을 제공한다.
+- 데이터를 영구적으로 변경하기 전에 데이터 변경을 미리 보게 한다.
+- 관련된 작업을 논리적으로 그룹화한다.
+- 하나의 트랜잭션이 끝난 후에 다음의 실행 가능한 SQL 문장은 자동적으로 다음 트랜잭션을 시작할 것이다.
+
+
+DDL 문장이나 DCL 문장은 자동으로 커밋되므로 트랜잭션을 암시적으로 종료한다.
+COMMIT, SAVEPOINT 그리고 ROLLBACK 문장을 사용하여 트랜잭션의 논리를 제어할 수 있다.
+
+COMMIT: 모든 미결정 ㅔ이터를 영구적으로 변경함으로서 현재 트랜잭션을 종료한다.
+SAVEPOINT savepoint_name: 현재 트랜잭션 내에 savepoint를 표시한다. savepoint 이름은 식별자 규칙을 따라야 하며 처음 32자만 사용된다.
+
+ROLLBACK: ROLLBACK은 모든 미결정 데이터 변경을 버림으로써 현재의 트랜잭션을 종료한다.
+
+
+SQL PLUS에서 오토커밋 명령은 ON이나 OFF로 토글될 수 있다.ON이면 각각의 개별적인 DML 문장이 실행되자마자 커밋된다. 그러므로 변경을 롤백할 수 없다. 
+OFF로 설정하면 COMMIT은 명시적으로 실행되거나 자동적인 COMMIT으로만 된다.
+
+-- 오토커밋 키고 끄기
+SET AUTOCOMMIT ON
+SET AUTOCOMMIT OFF
+
+SHOW AUTOCOMMIT-- 오토커밋 상태를 알 수 있다.
+
+
+DELETE FROM DEPTS
+ WHERE DEPARTMENT_ID = 10;
+
+--세이브포인트 생성
+SAVEPOINT DELETE_10;
+
+DELETE FROM DEPTS
+ WHERE DEPARTMENT_ID = 20;
+SAVEPOINT DELETE_20;
+
+DELETE FROM DEPTS;
+SAVEPOINT DELETE_ALL;
+
+ROLLBACK TO DELETE_20;
+ROLLBACK;
+
+DELETE_10 -> DELETE_20 -> DELETE_ALL
+
+DELETE_10으로 되돌아간 후에 DELETE_20이나 DELETE_ALL로 돌아갈 수 없다.
+
+트랜잭션은 DML에만 적용이 가능하다.
+커밋 이후에는 어떤 방법으로도 되돌릴 수 없다. 커밋을 해야 데이터베이스에 반영이된다.
+
+
+
+
+
