@@ -1,0 +1,115 @@
+
+CREATE SEQUENCE sequence_name
+  [INCREMENT BY N]
+  [START WITH N]
+  [{MAXVALUE N | NOMAXVALUE}]
+  [{MINVALUE N | NOMINVALUE}]
+  [{CYCLE | NOCYCLE}]
+  [{CACHE N | NOCACHE}]
+
+
+자동적으로 유일 번호를 생성한다.
+공유 가능한 객체이다.
+주로 기본 키 값을 생성하기 위해 사용한다.
+어플리케이션 코드를 대체한다.
+메모리에 캐시되면 시퀀스 값을 액세스하는 효율성을 향상시킨다.
+
+시퀀스는 테이블의 행에 대한 시퀀스 번호를 자동적으로 생성하기 위해 사용될 수 있다. 시퀀스는 사용자가 생성한 데이터베이스 객체이며 여러 사용자가 공유할 수 있다. 시퀀스의 가장 일반적이고 전형적인 사용은 각 행을 유일하게 구분하는 기본 키 값을 생성하기 위해서이다. 시퀀스 번호는 테이블과 관계없이 생성되고 저장된다. 그러므로 동일한 시퀀스는 여러 테이블에 대해 사용될 수 있다.
+
+
+
+
+NEXTVAL은 다음 사용 가능한 시퀀스 값을 리턴한다.
+CURRVAL은 현재 시퀀스 값을 리턴한다.
+CURRVAL이 참조되기 전에 NEXTVAL이 먼저 이용되어야 한다.
+
+INSERT INTO DEPTS(DEPTNO, DNAME, LOC)
+VALUES (DEPTS_SEQ.NEXTVAL, 'MARKETING', 'SAN DIEGO');
+
+
+-- 시퀀스 확인 명령
+SELECT *
+  FROM USER_SEQUENCES;
+-- VIEW 확인 명령
+SELECT *
+  FROM USER_VIEWS;
+-- 제약조건 확인명령
+SELECT *
+  FROM USER_CONSTRAINTS;
+
+-- 시퀀스 (순차적으로 증가하는 값)
+-- 시퀀스 생성
+CREATE SEQUENCE DEPT_SEQ;
+-- 시퀀스 삭제
+DROP SEQUENCE DEPT_SEQ;
+
+-- 옵션지정하고 시퀀스 생성  ,가 없다.
+CREATE SEQUENCE DEPT3_SEQ
+  INCREMENT BY 1
+  START WITH 1
+  MAXVALUE 10
+  NOCYCLE
+  NOCACHE;
+
+-- 테이블 생성
+CREATE TABLE DEPT3(
+    DEPT_NO NUMBER(3) CONSTRAINT DEPT3_DEPT_NO_PK PRIMARY KEY,
+    DEPT_NAME VARCHAR2(20),
+    DEPT_DATE DATE DEFAULT SYSDATE
+);
+
+-- 시퀀스 사용하기 CURRVAL, NEXTVAL
+-- 시퀀스 MAXVALUE가 10이기 때문에 10까지 증가되면 오류를 발생시킨다,
+-- NEXTVAL가 어디에서 쓰이든지 한번 쓰이면 돌이킬 수 없다. SEQUENCE 값은 증가한 상태다.
+INSERT INTO DEPT3(DEPT_NO, DEPT_NAME)
+VALUES (DEPT3_SEQ.NEXTVAL, 'TEST');
+
+-- 현재 시퀀스 확인
+SELECT DEPT3.CURRVAL
+  FROM DUAL;
+
+-- 시퀀스 수정
+-- ALTER SEQUENCE DEPT3_SEQ 옵션
+-- EX
+ALTER SEQUENCE DEPT3_SEQ MAXVALUE 9999; -- 맥스값 9999로 변경
+ALTER SEQUENCE DEPT3_SEQ INCREMENT BY 10; -- 증가값 10으로 변경
+ALTER SEQUENCE DEPT3_SEQ MINVALUE 1; -- 최소값 1로 변경
+
+
+-- 시퀀스 활용 PK값을 20201016-시퀀스값
+/*
+1.DEPT3_SEQ생성
+2.PK를 VARCHAR2로 생성
+3.INSERT실행 TO_CHAR() || - || 시퀀스 값
+*/
+
+INSERT INTO DEPT3
+VALUES(TO_CHAR(SYSDATE, 'YYYYMMDD')||'-'||DEPT3_SEQ.NEXTVAL, 'TEST');
+
+
+
+
+INDEX
+
+테이블이나 클러스터에서 쓰이는 선택적인 객체이다.
+오라클 데이버테이스 테이블내의 원하는 레코드를 빠르게 찾아갈 수 있도록 만들어진 데이터 구조이다.
+
+
+인덱스의 구조는 테이블과 독립적이므로 인덱스의 삭제는 테이블의 데이터에는 아무런 영향도 미치지 않는다.
+
+
+--INDEX  
+--INDEX는 PRIMARY KEY, UNIQUE 제약조건에서 자동으로 생성되고, 조회를 빠르게 해주는 HINT역할을 한다.
+--INDEX는 조회를 빠르게 하지만, 너무 많은 인덱스를 생성해서 사용하면 오히려 성능 부하를 일으킬 수 있다.
+--그래서 최후의 수단으로 INDEX를 사용하는 것이 올바른 사용방법
+SELECT * FROM USER_INDEXES;
+
+-- INDEX를 수동으로 추가
+CREATE INDEX EMPS_FIRST_NAME_IX
+ON EMPS(FIRST_NAME);
+
+-- INDEX 삭제
+DROP INDEX EMPS_FIRST_NAME_IX;
+
+
+

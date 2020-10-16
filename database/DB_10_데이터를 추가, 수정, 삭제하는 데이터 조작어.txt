@@ -1,0 +1,175 @@
+테이블에 데이터 추가하기
+
+
+테이블 생성하기
+CREATE TABLE 테이블이름
+    AS SELECT * FROM 테이블이름2;
+
+CREATE TABLE DEPT_TEMP
+    AS SELECT * FROM DEPT;
+
+
+
+테이블에 데이터를 추가하는 INSERT 문
+
+INSERT INTO 테이블 이름[(열1, 열2, ..., 열N)]
+VALUES (열1에 들어갈 데이터, 열2에 들어갈 데이터, ..., 열N에 들어갈 데이터)
+
+INSERT INTO DEPT_TEMP (DEPTNO, DNAME, LOC)
+	       VALUES (50, 'DATABASE', 'SEOUL');
+
+
+INSERT문으로 데이터 입력하기(열 지정을 생략할 때)
+
+열 지정을 생략하면 해당 테이블을 만들 때 설정한 열 순서대로 모두 나열되어 있다고 가정하고 데이터를 작성해야 한다.
+
+INSERT INTO DEPT_TEMP
+     VALUES (60, 'NETWORK', 'BUSAN');
+
+하지만 INSERT문에 열을 지정할 때 열을 생략하는 방식보다 모든 열을 직접 명시하는 방법이 낫다. 개발시에 해당 테이블을 찾아보지 않더라도 해당 테이블에 포함된 열의 내용을 한눈에 알아볼 수 있어 이해하기 쉽기 때문이다.
+
+
+테이블에 NULL 데이터 입력하기
+NULL을 INSERT문에 지정하는 방법은 NULL을 직접 명시적으로 입력해 주는 방법과 대상 열을 생략하여 암시적으로 NULL이 입력되도록 유도하는 방식이 있다.
+
+NULL의 명시적 입력
+INSERT INTO DEPT_TEMP (DEPTNO, DNAME, LOC)
+	       VALUES (70    , 'WEB', NULL);
+
+해당 열의 자료형이 문자열 또는 날짜형일 경우 빈 공백 문자열을 사용해도 NULL을 입력할 수 있다.
+하지만 NULL을 직접 명시해야 하는 경우에 공백 문자열인 작은따옴표를 사용하여 NULL을 입력하는 방식보다 NULL이란 단어를 정확히 입력하는 방식이 낫다.
+
+
+NULL의 암시적 입력
+INSERT문에 NULL이 들어가야 할 열 이름을 아예 입력하지 않는 것이다.
+
+INSERT INTO DEPT_TEMP (DEPTNO, LOC)
+	       VALUES (90    , 'INCHEON');
+
+
+
++ 급하게 테이블의 구조만 복사할 때
+CREATE TABLE EMP_TEMP
+    AS SELECT *
+	 FROM EMP
+	WHERE 1 <> 1
+EMP 테이블과 같은 열 구조를 가지지만 데이터는 복사하고 싶지 않을 때 종종 사용한다. WHERE 절의 조건이 1<>1이기 때문에 각 행을 조건식에 대입한 결과 값은 항상 FALSE가 되어 결과적으로 행은 만들어지지 않는다.
+
+
+날짜 데이터를 입력하는 경우
+-, / 중 아무거나 써도 된다.
+날짜 데이터를 INSERT문으로 입력할 때는 문자열로 날짜를 입력하지 않고, TO_DATE함수를 사용하는 것이 좋다.
+
+INSERT INTO EMP_TEMP (HIREDATE)
+	      VALUES (TO_DATE('07/01/2001', 'DD/MM/YYYY'));
+
+현재 시점으로 날짜를 입력할 경우에는 SYSDATE를 지정하여 간단히 처리할 수 있다. SYSDATE 방식은 데이터 입력 시점을 정확히 입력할 수 있어 자주 사용한다.
+
+
+서브쿼리를 사용하여 한 번에 여러 데이터 추가하기
+
+INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR)
+     SELECT EMP_NO, ENAME, JOB, MGR
+       FROM EMP;
+
+INSERT문에서 서브쿼리를 사용할 때 유의할 점
+-VALUES절은 사용하지 않는다.
+-데이터가 추가되는 테이블의 열 개수와 서브쿼리의 열 개수가 일치해야 한다.
+-데이터가 추가되는 테이블의 자료형과 서브쿼리의 자료형이 일치해야 한다.
+
+그밖에 여러 문법이 있다.
+필요할 때 오라클 공식 문서에서 찾아볼 것
+INSERT나 MERGE 등 
+
+
+
+
+테이블에 있는 데이터 수정하기
+
+UPDATE문 사용
+
+UPDATE 변경할테이블
+SET    변경할열1=데이터1 [,변경할열2=데이터2],...,[,변경할열N=데이터N]
+[WHERE 데이터를 변경할 대상 행을 선별하기 위한 조건];
+
+
+데이터 전체 수정하기
+UPDATE DPET_TEMP
+   SET LOC = 'SEOUL';
+
+데이터 일부분만 수정하기
+UPDATE문에서 수정 대상 행을 선별하기 위해 WHERE절과 조건식을 사용한다.
+
+UPDATE DEPT_TEMP2
+   SET DNAME = 'DATABASE',
+       LOC   = 'SEOUL'
+ WHERE DEPTNO = 40;
+
+
+서브쿼리를 사용하여 데이터를 수정하기
+
+여러 열을 한 번에 수정하는 경우
+UPDATE DEPT_TEMP2
+   SET (DNAME, LOC) = (SELECT DNAME, LOC
+			 FROM DEPT
+			WHERE DEPTNO = 40)
+ WHERE DEPTNO = 40;
+
+열 하나하나를 수정하는 경우
+UPDATE DEPT_TEMP2
+   SET DNAME = (SELECT DNAME
+		  FROM DEPT
+		 WHERE DEPTNO = 40),
+       LOC   = (SELECT LOC
+		  FROM DEPT
+		 WHERE DEPTNO = 40)
+ WHERE DEPTNO = 40;
+
+
+UPDATE문 사용할 때 유의점
+UPDATE문을 실행하기 전에 UPDATE문의 WHERE절을 검증하는 작업이 반드시 필요하다. 변경해야 하는 행만 정확하게 선정해서 수정하는지 확인하는 것이다. 이를 위해 해당 WHERE절을 UPDATE문에 넣어 실행하기 전에 SELECT문에서 먼저 사용해 보는 것만으로도 간단하게 확인할 수 있다.
+
+EX
+
+UPDATE DEPT_TEMP2
+   SET DNAME  = 'DATABASE',
+       LOC    = 'SEOUL'
+ WHERE DEPTNO = 40;
+
+SELECT *
+  FROM DEPT_TEMP2
+ WHERE DEPTNO = 40;
+
+반드시 UPDATE문과 DELETE문을 실행하기 전에 SELECT문으로 WHERE절의 조건식이 정확한지 확인하는 습관을 기르자.
+
+
+
+
+테이블에 있는 데이터 삭제하기
+
+DELETE문은 테이블에 있는 데이터를 삭제할 때 사용한다.
+
+DELETE [FROM] 테이블 이름
+[WHERE 삭제할 대상 행을 선별하기 위한 조건식];
+
+데이터 일부분만 삭제하기
+DELETE FROM EMP_TEMP2
+ WHERE JOB = 'MANAGER';
+
+서브쿼리를 사용하여 데이터 삭제하기
+DELETE FROM EMP_TEMP2
+ WHERE EMPNO IN (SELECT E.EMPNO
+		   FROM EMP_TEMP2 E, SALGRADE S
+		  WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL
+		    AND S.GRADE = 3
+		    AND DEPTNO  = 30);
+
+
+데이터 전체 삭제하기
+DELETE문에 WHERE절이 없다는 것은 해당 테이블의 모든 데이터를 삭제한다는 의미다.
+DELETE FROM EMP_TEMP2;
+
+DELETE문이나 UPDATE문을 사용한다면 WHERE절의 조건식이 정확히 삭제할 대상을 선택하고 있는지 SELECT문을 사용하여 반드시 검증을 거친 후에 실행하는 습관을 길러라.
+
+
+
