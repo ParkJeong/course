@@ -151,6 +151,86 @@ ROWNUM은 의사 열(pseudo column)이라고 하는 특수 열이다. 의사 열
 규칙에 따라 순번을 생성하는 시퀀스
 
 시퀀스는 오라클 데이터베이스에서 특정 규칙에 맞는 연속 숫자를 생성하는 객체이다.
+단지 연속하는 새로운 번호를 만드는 일이라면 다음과 같이 MAX함수에 1을 더한 값을 사용해도 상관없을 것이다. 이 방식은 실제로 연속하는 숫자로 이루어진 웹 서비스의 새로운 게시판 번호나 상품 주문 번호 등을 생성할 때 종종 생성하는 방식이다.
+SELECT MAX(글 번호) + 1
+  FROM 게시판테이블
+
+하지만 이 방식은 테이블 데이터가 많아질수록 가장 큰 데이터를 찾고 새로운 번호를 계산하는 시간이 함께 늘어나므로 아쉬운 부분이 있다. 또한 동시에 여러 곳에서 새로운 번호를 요구했을 경우에 SELECT문의 결과 값이 같게 나와 번호가 중복될 수도 있다.
+이와 비교하여 시퀀스는 단순히 번호 생성을 위한 객체이지만 지속적이고 효율적인 번호 생성이 가능하므로 여러모로 자주 사용하는 객체이다.
+
+
+시퀀스 생성
+시퀀스 역시 CREATE문으로 생성하며 다음과 같이 다양한 옵션을 지정할 수 있다.
+
+CREATE SEQUENCE 시퀀스이름
+[INCREMENT BY N]
+[START WITH N]
+[MAX VALUE N | MOMAXVALUE]
+[MINVALUE N | NOMINVALUE]
+[CYCLE | NOCYCLE]
+[CACHE N | NOCACHE]
+
+
+시퀀스 사용
+시퀀스_이름.CURRVAL: 시퀀스에서 마지막으로 생성한 번호를 반환. 시퀀스를 생성하고 바로 사용하면 번호가 만들어진 적이 없으므로 오류가 난다.
+
+시퀀스_이름.NEXTVAL: 다음 번호를 생성
+
+INSERT INTO DEPT_SEQUENCE (DEPTNO, DNAME, LOC)
+VALUES (SEQ_DEPT_SEQUENCE.NEXTVAL, 'DATABASE', 'SEOUL');
+
+SELECT SEQ_DEPT_SEQUENCE.CURRVAL
+  FROM DUAL;
+
+
+시퀀스 수정
+ALTER 명령어로 시퀀스를 수정하고 DROP 명령어로 시퀀스를 삭제한다. 
+시퀀스 수정은 옵션을 재설정하는 데 사용한다.
+
+ALTER SEQUENCE 시퀀스이름
+ [INCREMENT BY N]
+ [MAXVALUE N | NOMAXVALUE]
+ [MINVALUE N | NOMINVALUE]
+ [CYCLE | NOCYCLE]
+ [CACHE N | NOCACHE]
+
+ALTER SEQUENCE SEQ_DEPT_SEQUENCE
+ INCREMENT BY 3
+ MAXVALUE 99
+ CYCLE;
+
+시퀀스 삭제
+DROP SEQUENCE를 사용하면 시퀀스를 삭제할 수 있다.
+
+DROP SEQUENCE SEQ_DEPT_SEQUENCE;
+
+
+
+공식 별칭을 지정하는 동의어
+
+동의어는 테이블, 뷰, 시퀀스 등 객체 이름 대신 사용할 수 있는 다른 이름을 부여하는 객체이다. 주로 테이블 이름이 너무 길어 사용이 불편할 때 좀 더 간단하고 짧은 이름을 하나 더 만들어 주기 위해 사용한다.
+
+CREATE [PUBLIC] SYNONYM 동의어_이름
+FOR [사용자.]객체_이름;
+
+PUBLIC: 동의어를 데이터베이스 내 모든 사용자가 사용할 수 있도록 설정. 생략할 경우 동의어를 생성한 사용자만 사용 가능(PUBLIC으로 생성되어도 본래 객체의 사용 권한이 있어야 사용 가능)
+
+사용자: 생성할 동의어의 본래 객체 소유 사용자를 지정. 생략할 경우 현재 접속한 사용자로 지정
+
+동의어는 열이나 테이블의 별칭과 유사하지만, 오라클 데이터베이스에 저장되는 객체이기 때문에 일회성이 아니라는 점에서 차이가 난다.
+
+CREATE SYNONYM E
+   FOR EMP;
+
+SELECT *
+  FROM E;
+
+
+동의어 삭제
+DROP SYNONYM E;
+
+
+
 
 
 

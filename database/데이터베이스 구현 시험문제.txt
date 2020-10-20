@@ -1,0 +1,61 @@
+[문항1]
+관계형 데이터베이스 관리 시스템(Relational DataBase Management System, RDBMS)
+관계형 모델을 기반으로 하는 데이터베이스 관리 시스템이다. 관계형 데이터 모델은 데이터 간 관계에 초점을 둔다. 관계형 데이터 모델은 데이터를 일정 기준으로 나누어 관리한다. 각 데이터들의 묶음은 1개 이상의 속성을 가지고 데이터들의 묶음끼리 관계를 가지고 있다.
+
+[문항2]
+1. VARCHAR2, NUMBER, DATE
+2. 데이터베이스 오브젝트 내 실제 데이터를 저장하는 공간이다. 데이터베이스의 물리적인 부분이다.
+
+[문항3]
+1.
+CREATE USER COM03 
+IDENTIFIED BY COM03;
+
+2.
+GRANT CONNECT, RESOURCE
+   TO COM03;
+3.
+
+4.
+ALTER USER COM03
+DEFAULT TABLESPACE MYWEB
+QUOTA UNLIMITED ON MYWEB;
+
+5.데이터베이스 오브젝트 내 실제 데이터를 저장하는 공간이다. 데이터베이스의 물리적인 부분이다.
+
+[문항4]
+
+CREATE SEQUENCE SEQ_MEMBERS_NO
+ INCREMENT BY 1
+ MAXVALUE 1000000
+ NOCACHE;
+
+CREATE TABLE MEMBERS (
+  ID          VARCHAR2(20),
+  PW 	      VARCHAR2(20),
+  NAME	      VARCHAR2(20),
+  ADDRESS     VARCHAR2(20),
+  PHONE       VARCHAR2(20),
+  MEMBER_TYPE VARCHAR2(20),
+  USE_YN      VARCHAR2(20),
+  REGDATE     DATE DEFAULT SYSDATE,
+  CONSTRAINT MEMBERS_ID_PK PRIMARY KEY(ID),
+  CONSTRAINT MEMBERS_USE_YN_CK CHECK(USE_YN IN ('Y', 'N'))
+);
+
+
+[문항5]
+1. 데이터 접근 속도와 검색 속도를 빠르게 하기 위해서이다.
+
+2. 편리성과 보안성이다. 자주 쓰는 서브쿼리문을 뷰로 만들어서 사용하면 가독성도 좋고 편리하다. 
+원본 데이터에는 접근 권한을 주지 않고 읽기 전용 뷰를 만들어서 뷰에만 접근하도록 한다. 이를 통해 원본 데이터가 수정되는 것을 막을 수 있고 특정 사용자에게는 특정 정보만 접근하도록 할 수 있다.
+
+3.
+CREATE INDEX IDX_MEMBERS_PHONE
+    ON MEMBERS(PHONE);
+
+4.
+CREATE VIEW VIEW_MEMBERS
+    AS (SELECT NAME, ADDRESS, PHONE, MEMBER_TYPE
+          FROM MEMBERS)
+WITH READ ONLY;

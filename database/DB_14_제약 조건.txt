@@ -1,0 +1,212 @@
+제약 조건 종류
+
+제약 조건은 테이블의 특정 열에 지정한다. 제약 조건을 지정한 열에 제약 조건에 부합하지 않는 데이터를 저장할 수 없다. 제약 조건 지정 방식에 따라 기존 데이터의 수정이나 삭제 가능 여부도 영향을 받는다.
+
+NOT NULL: 지정한 열에 NULL을 허용하지 않는다.
+
+UNIQUE: 지정한 열이 유일한 값을 가져야 한다. 단 NULL은 값의 중복에서 제외된다.
+
+PRIMARY KEY: 지정한 열이 유일한 값이면서 NULL을 허용하지 않는다. 
+
+FOREIGN KEY: 다른 테이블의 열을 참조하여 존재하는 값만 입력할 수 있다.
+
+CHECK: 설정한 조건식을 만족하는 데이터만 입력 가능하다.
+
+
++데이터 무결성(data integrity)
+데이터베이스에 저장되는 데이터의 정확성과 일관성을 보장한다는 의미이며 이를 위해 항상 유지해야 하는 기본 규칙을 가지고 있다. 제약 조건은 이러한 데이터 무결성을 지키기 위한 안전장치로서 중요한 역할을 한다. 테이블 데이터의 삽입, 수정, 삭제 등 모든 과정에서 지켜야 한다.
+
+영역 무결성(domain integrity): 열에 저장되는 값의 적정 여부를 확인. 자료형, 적절한 형식의 데이터, NULL 여부같은 정해 놓은 범위를 만족하는 데이터임을 규정
+
+개체 무결성(entity integrity): 테이블 데이터를 유일하게 식별할 수 있는 기본키는 반드시 값을 가지고 있어야 하며 NULL이 될 수 없고 중복될 수도 없음을 규정
+
+참조 무결성(referential integrity): 참조 테이블의 외래키 값은 참조 테이블의 기본키로서 존재해야 하며 NULL이 가능
+
+
+
+빈 값을 허락하지 않는 NOT NULL
+
+테이블을 생성하며 제약 조건 지정
+NOT NULL은 특정 열에 데이터의 중복 여부와는 상관없이 NULL의 저장을 허용하지 않는 제약 조건이다. 반드시 열에 값이 존재해야만 하는 경우에 지정한다.
+
+CREATE TABLE TABLE_NOTNULL(
+    LOGIN_ID VATCHAR2(20) NOT NULL
+);
+
+
+제약 조건을 지정한 열은 항상 해당 제약 조건을 만족해야 하므로 신규 데이터의 삽입뿐만 아니라 기존 데이터의 수정 및 삭제에도 영향을 준다.
+
+
+제약 조건 확인
+USER_CONSTRAINTS 데이터 사전에서 지정한 제약 조건 정보를 확인한다.
+
+
+제약 조건 이름 직접 지정
+제약 조건에 이름을 직접 지정하려면 CONSTRAINT 키워드를 사용한다.
+
+CREATE TABLE TABLE_NOTNULL2(
+    LOGIN_ID VARCHAR2(20) CONSTRAINT TBLNN2_LGNID_NN NOT NULL
+);
+
+
+이미 생성한 테이블에 제약 조건 지정
+
+생성한 테이블에 제약 조건 추가하기
+
+ALTER TABLE TABLE_NOTNULL
+MODIFY(TEL NOT NULL);
+
+ALTER TABLE TABLE_NOTNULL
+MODIFY(TEL CONSTRAINT TBLNN_TEL_NN NOT NULL);
+
+
+생성한 제약 조건의 이름 변경하기
+ALTER TABLE TABLE_NOTNULL2
+RENAME CONSTRAINT TBLNN_TEL_NN TO TBLNN2_TEL_NN;
+
+제약 조건 삭제
+ALTER TABLE TABLE_NOTNULL2
+DROP CONSTRAINT TBLNN2_TEL_NN;
+
+
+
+중복되지 않는 값 UNIQUE
+열에 저장할 데이터의 중복을 허용하지 않고자 할 때 사용한다.NULL은 값이 존재하지 않음을 의미하기 때문에 중복 대상에서는 제외된다.
+
+
+CREATE TABLE TABLE_UNIQUE(
+    LOGIN_ID VARCHAR2(20) UNIQUE
+);
+
+CREATE TABLE TABLE_UNIQUE2(
+    LOGIN_ID VARCHAR2(20) CONSTRAINT TBLWNQ2_LGNID_UNQ UNIQUE
+);
+
+
+
+
+SELECT CONSTRAINT_TYPE
+  FROM USER_CONSTRAINTS;
+
+CONSTRAINT_TYPE이 C면 NOT NULL 또는 CHECK라는 뜻이다.
+U면 UNIQUE라는 뜻이다.
+P면 PRIMARY KEY라는 뜻이다.
+R이면 FOREIGN KEY라는 뜻이다.
+
+
+ALTER TABLE TABLE_UNIQUE
+MODIFY(TEL UNIQUE);
+
+ALTER TABLE TABLE_UNIQUE
+MODIFY(TEL UNIQUE CONSTRAINT TBLUNQ_TEL_UNQ UNIQUE);
+
+ALTER TABLE TABLE_UNIQUE
+RENAME CONSTRAINT TBLUNQ_TEL_UNQ TO TBLUNQ2_TEL_UNQ;
+
+ALTER TABLE TABLE_UNIQUE
+DROP CONSTRAINT TBLUNQ2_TEL_UNQ;
+
+
+
+유일하게 하나만 있는 값 PRIMARY KEY
+PRIMARY KEY 제약 조건은 UNIQUE와 NOT NULL 제약 조건의 특성을 모두 가지는 제약 조건이다. PRIMARY KEY 제약 조건은 테이블에 하나밖에 지정할 수 없다.
++PRIMARY KEY로 적합한 특성을 가졌더라도 주민등록번호와 같이 예민한 개인 정보를 의미하는 데이터는 PRIMARY KEY로 지정하지 않는다.
+
+CREATE TABLE TABLE_PK(
+    LOGIN_ID VARCHAR2(20) PRIMARY KEY
+);
+
+CREATE TABLE TABLE_PK2(
+    LOGIN_ID VARCHAR2(20) CONSTRAINT TBLPK2_LGNID_PK PRIMARY KEY
+);
+
+PRIMARY KEY를 지정하면 인덱스가 자동 생성된다. 이 인덱스의 이름은 제약 조건과 같은 이름이다.
+
+
+
++인라인 또는 열 레벨 제약 조건 정의
+CREATE TABLE TABLE_NAME(
+    COL1 VARCHAR2(20) CONSTRAINT CONSTRAINT_NAME PRIMARY KEY,
+    COL2 VARCHAR2(20) NOT NULL
+);
+
+아옷오브라인 또는 테이블 레벨 제야 조건 정의
+이 방식은 NOT NULL 제약 조건을 제외한 제약 조건 지정이 가능하다.
+CREATE TABLE TABLE_NAME(
+    COL1 VARCHAR2(20),
+    COL2 VARCHAR2(20),
+    PRIMARY KEY (COL1),
+    CONSTRAINT CONSTRAINT_NAME UNIQUE (COL2)
+);
+
+
+
+
+다른 테이블과 관계를 맺는 FOREIGN KEY
+
+외래키 외부키라고도 부르는 FOREIGN KEY는 서로 다른 테이블 간 관계를 정의하는 데 사용하는 제약 조건이다. 
+FOREIGN KEY에는 참조하는 테이블의 열에 저장된 데이터나 NULL값만 저장될 수 있다.
+참조 대상 테이블을 부모, 참조하는 테이블을 자식으로 표현한다.
+
+CREATE TABLE 테이블이름(
+  COL1 열자료형 [CONSTRAINT 제약조건이름] REFERENCES 참조테이블(참조할 열)
+);
+
+CREATE TABLE 테이블이름(
+  COL1 열자료형,
+  [CONSTRAINT 제약조건이름] FOREIGN KEY(COL1)
+  REFERENCES 참조테이블(참조할 열)
+);
+
+
+
+FOREIGN KEY로 참조 행 데이터 삭제하기
+현재 DEPT_FK 테이블에는 10번 부서 데이터가 저장되어 있고 EMP_PK 테이블에는 이 10번 부서를 참조하는 데이터가 있다. 이 경우에 DEPT_FK 테이블의 DEPTNO 열에 저장된 10번 부서 데이터는 삭제할 수 없다.
+오류가 발생하는 이유는 자식 레코드, 즉 삭제하려는 DEPTNO 값을 참조하는 데이터가 존재하기 때문이다. DEPT_PK 테이블의 데이터를 삭제하려면 다음 방법 중 한 가지를 사용해야 한다.
+1. 현재 삭제하려는 열 값을 참조하는 데이터를 먼저 삭제한다.
+2. 현재 삭제하려는 열 값을 참조하는 데이터를 수정한다.
+3. 현재 삭제하려는 열을 참조하는 자식 테이블의 FOREIGN KEY 제약 조건을 해제한다.
+
+위 방법은 귀찮고 까다롭다. 따라서 제약 조건을 처음 지정할 때 다음과 같이 추가 옵션을 지정하는 방법을 사용하기도 한다. 이 방법은 데이터 삭제와 더불어 삭제할 데이터를 참조하는 처리를 어떻게 할지 정할 수 있다.
+
+1. 열 데이터를 삭제할 때 이 데이터를 참조하고 있는 데이터도 함께 삭제
+[CONSTRAINT 제약조건이름] REFERENCES 참조테이블(참조할 열) ON DELETE CASCADE
+
+
+2. 열 데이터를 삭제할 때 이 데이터를 참조하는 데이터를 NULL로 수정
+[CONSTRAINT 제약조건이름] REFERENCES 참조 테이블(참조할 열) ON DELETE SET NULL
+
+
+제약 조건은 어떤 테이블에 저장할 데이터 특성을 정의하는 데 사용하는 특수한 규칙을 뜻한다.
+오라클 데이터베이스에서 사용할 수 있는 제약 조건은 다섯 가지가 있다. 지정한 열에 NULL 값을 제외한 값의 중복이 불가능한 UNIQUE, NULL을 허용하지 않는 NOT NULL, 다른 테이블의 열을 참조하는 FOREIGN KEY, NULL값과 데이터의 중복을 허용하지 않는 PRIMARY KEY가 있다. CHECK 조건은 데이터의 형태와 범위를 지정한다.
+
+
+
+
+데이터 형태와 범위를 정하는 CHECK
+CHECK 제약 조건은 열에 저장할 수 있는 값의 범위 또는 패턴을 정의할 때 사용한다.
+
+CREATE TABLE TABLE_CHECK(
+  LOGIN_PWD VARCHAR2(20) CONSTRAINT TBLCK_LOGINPW_CK CHECK (LENGTH(LOGIN_PWD) > 3)
+);
+
+
+
+기본값을 정하는 DEFAULT
+제약 조건과는 별개로 특정 열에 저장할 값이 지정되지 않았을 경우에 기본값을 지정할 수 있다.
+
+CREATE TABLE TABLE_DEFAULT(
+  HIREDATE DATE DEFAULT SYSDATE
+);
+
+
+제약 조건 비활성화, 활성화
+제약 조건은 데이터 무결성을 보장하는 데 중요한 역할을 한다. 하지만 신규 기능 개발 도는 테스트 같은 특정 업무를 수행해야 할 때 제약 조건이 걸림돌이 되는 경우가 종종 생긴다. 이때 제약 조건을 비활성화하고 활성화할 수 있다. 비활성화에는 DISABLE절을, 활성화에는 ENABLE절을 사용한다.
+
+ALTER TABLE 테이블이름
+DISABLE [NOVALIDATE / VALIDATE] CONSTRAINT 제약조건이름;
+
+ALTER TABLE 테이블이름
+ENABLE [NOVALIDATE / VALIDATE] CONSTRAINT 제약조건이름;
+
+
