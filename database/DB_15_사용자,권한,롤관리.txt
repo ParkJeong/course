@@ -1,0 +1,209 @@
+사용자 관리
+
+데이터베이스에 접속하여 데이터를 관리하는 계정을 사용자로 표현한다.
+
+사용자 관리가 필요한 이유
+
+데이터를 활용한 서비스 규모가 크거나 작은 규모의 여러 서비스를 통합한 방식 등 실무에서 사용하는 여러 종류의 서비스는 한 사용자가 관리하기에는 데이터 분량이 너무 방대하거나 구조가 복잡해지는 경우가 많다.
+테이블, 인덱스, 뷰 등 여러 객체를 사용자별로 사용자 업무에 맞는 데이터 구조를 만들어 생성하고 관리하는 방식을 사용할 수 있다. 또 데이터 구조 먼저 정의한 뒤에 사용할 수 있는 데이터 영역을 각 사용자에게 지정할 수 있다.
+
+
+데이터베이스 스키마란
+데이터베이스에서 데이터 간 관계, 데이터 구조, 제약 조건 등 데이터를 저장 및 관리하기 위해 정의한 데이터베이스 구조의 범위를 스키마(schema)를 통해 그룹 단위로 분류한다.
+사용자는 데이터를 사용 및 관리하기 위해 오라클 데이터베이스에 접속하는 개체를 뜻한다.
+스키마는 오라클 데이터베이스에 접속한 사용자와 연결된 객체를 의미한다.
+SCOTT 계정을 예로 들면 SCOTT은 사용자이고 SCOTT이 생성한 테이블, 뷰, 제약 조건, 인덱스, 시퀀스, 동의어 등 데이터베이스에서 SCOTT 계정으로 만든 모든 객체는 SCOTT의 스키마가 된다.
+
+
+사용자 생성
+오라클 사용자를 생성할 때는 CREATE USER문을 사용한다. 
+
+CREATE USER 사용자이름
+IDENTIFIED BY 비밀번호
+[DEFAULT TABLESPACE 테이블스페이스이름]
+[TEMPORARY TABLESPACE 테이블스페이스이름]
+[QUOTA 테이블스패이스크기 ON 테이블스페이스이름]
+[PROFILE 프로파일이름]
+[PASSWORD EXPIRE]
+[ACCOUNT [LOCK/UNLOCK]]
+
+사용자 생성권한을 가진 사용자만이 가능하다. 사용자 생성은 일반적으로 데이터베이스 관리 권한을 가진 사용자가 권한을 가지고 있다. 
+
+CREATE USER ORCLSTUDY
+IDENTIFIED BY ORACLE;
+
+새로 생성한 ORCLSTUDY 사용자로 접속을 시도하면 접속이 되지 않는다. 사용자가 생성되기는 했지만 데이터베이스 연결을 위한 권한, 즉 CREATE SESSION 권한을 부여받지 못했기 때문이다.
+GRANT문은 권한을 부여하기 위해 사용하는 명령어이다.
+여기에 사용된 GRANT문은 CREATE SESSION 권한을 ORCLSTUDY 사용자에게 부여하고 있으며, 이는 데이터베이스 접속 권한을 주겠다는 의미이다.
+
+GRANT CREATE SESSION TO ORCLSTUDY;
+
+이제 ORCLSTUDY 사용자로 데이터베이스에 접속할 수 있다. ORCLSTUDY사용자가 SCOTT계저처럼 테이블을 만들고 데이터를 사용하려면 몇몇 권한이 더 필요하다.
+
+
+사용자 정보 조회
+SELECT * FROM ALL_USERS
+ WHERE USERNAME = 'ORCLSTUDY';
+
+SELECT * FROM DBA_USERS
+ WHERE USERNAME = 'ORCLSTUDY';
+
+SELECT * FROM DBA_OBJECTS
+ WHERE OWNER = 'ORCLSTUDY';
+
+
+오라클 사용자의 변경과 삭제
+오라클 사용자 변경
+사용자 정보를 변경할 때는 ALTER USER문을 사용한다.
+
+ALTER USER ORCLSTUDY
+IDENTIFIED BY ORCL;
+
+
+오라클 사용자 삭제
+
+삭제하려는 사용자가 다른 곳에서 접속되어 있다면 삭제되지 않는다.
+
+DROP USER ORCLSTUDY;
+
+오라클 사용자와 객체 모두 삭제
+사용자 스키마에 객체가 있을 경우에 CASCADE 옵션을 사용하여 사용자의 객체를 모두 삭제할 수 있다.
+
+DROP USER ORCLSTUDY CASCADE;
+
+
+
+
+권한 관리
+
+데이터베이스는 접속 사용자에 따라 접근할 수 있는 데이터 영역과 권한을 지정해 줄 수 있다. 오라클에서는 권한을 시스템 권한(system privilege)과 객체 권한(object privilege)으로 분류하고 있다.
+
+
+시스템 권한이란?
+오라클 데이터베이스의 시스템 권한(system privilege)은 사용자 생성과 정보 수정 및 삭제, 데이터베이스 접근, 오라클 데이터베이스의 여러 자원과 객체 생성 및 관리 등의 권한을 포함한다. 이러한 내용은 데이터베이스 관리 권한이 있는 사용자가 부여할 수 있는 권한이다. ANY 키워드가 들어 있는 권한은 소유자에 상관없이 사용 가능한 권한을 의미한다.
+
+
+시스템 권한 부여
+
+GRANT CREATE SESSION TO ORCLSTUDY;
+이 명령어는 ORCLSTUDY 사용자에게 CREATE SESSION 권한을 부여하겠다는 뜻이다.
+
+GRANT 시스템 권한1 [,시스템권한2, ...] TO 사용자 이름/ 롤 이름/ PUBLIC
+[WITH ADMIN OPTION]
+
+WITH ADMIN OPTION은 현재 GRANT문을 통해 부여받은 권한을 다른 사용자에게 부여할 수 있는 권한도 함께 부여받는다.
+
+GRANT RESOURCE, CREATE SESSION, CREATE TABLE TO ORCLSTUDY;
+
++RESOURCE는 오라클 데이터베이스에서 제공하는 롤 중 하나이다. 롤은 여러 권한을 하나의 이름으로 묶어 권한 부여 관련 작업을 간편하게 하려고 사용한다.
+만약 GRANT문에 RESOURCE를 지정하지 않는다면, ORCLSTUDY 사용자에게 테이블 생성 권한을 부여해도 CREATE문으로 테이블을 생성할 수 없거나 테이블이 생성되더라도 INSERT문에서 오류가 발생한다.
+
+테이블 스페이스는 테이블이 저장되는 공간을 의미하며 따로 지정하지 않으면 기본 테이블 스페이스 USERS가 할당된다. RESOURCE 롤에는 사용자를 생성할 때 사용 테이블 스페이스의 영역을 무제한 사용 가능하게 해주는 권한(UNLIMITED TABLESPACE)이 포함되어 있다. 테이블 스페이스의 영역 사용에 한계를 두지 않는 UNLIMITED TABLESPACE 권한은 엄밀한 관리가 필요한 경우에 적절하지 않으므로 사용자를 생성 및 수정할 때 QUOTA절로 사용 영역에 제한을 두기도 한다.
+
+ALTER USER ORCLSTUDY
+QUOTA 2M ON USERS;
+
+
+시스템 권한 취소
+GRANT 명령어로 부여한 권한의 취소는 REVOKE 명령어를 사용한다.
+REVOKE 시스템권한 FROM 사용자 이름/롤이름/PUBLIC
+
+REVOKE RESOURCE, CREATE TABLE FROM ORCLSTUDY;
+
+
+객체 권한이란?
+객체 권한(object privilege)은 특정 사용자가 생성한 테이블, 인덱스, 뷰, 시퀀스 등과 관련된 권한이다.
+ALTER, DELETE, INDEX, INSERT, REFERENCES, SELECT, UPDATE
+
+
+객체 권한 부여
+
+GRANT 객체 권한/ALL PRIVILEGES
+   ON 스키마, 객체이름
+   TO 사용자 이름/ 롤이름/ PUBLIC
+   [WITH GRANT OPTION]
+
+
+GRANT SELECT ON TEMP TO ORCLSTUDY;
+GRANT INSERT ON TEMP TO ORCLSTUDY;
+
+GRANT SELECT, INSERT ON TEMP
+   TO ORCLSTUDY;
+
+
+객체 권한 취소
+REVOKE 객체 권한/ALL PRIVILEGES
+    ON 스키마, 객체이름
+  FROM 사용자 이름/ 롤 이름/ PUBLIC
+[CASCADE CONSTRAINTS/FORCE]
+
+REVOKE SELECT, INSERT ON TEMP FROM ORCLSTUDY;
+
+
+오라클에서는 새로운 사용자를 생성하기 위해 CREATE USER문을 사용한다. 생성된 계정에는 여러 가지 권한을 부여할 수 있다. 권한을 부여하기 위해서 사용하는 명령어는 GRANT이며, 부여한 권한을 취소하기 위해서는 REVOKE 명령어를 사용한다.
+
+
+
+
+
+롤 관리
+
+신규 생성자는 아무런 권한이 없으므로 오라클 데이터베이스에서 제공하는 다양한 권한을 일일이 부여해 주어야 한다. 이러한 불편한 점을 해결하기 위해 롤을 사용한다. 롤은 여러 종류의 권한을 묶어 놓은 그룹을 뜻한다. 롤을 사용하면 여러 권한을 한 번에 부여하고 해제할 수 있으므로 권한 관리 효율을 높일 수 있다.
+
+롤은 오라클 데이터베이스를 설치할 때 기본으로 제공되는 사전 정의된 롤(predefined roles)과 사용자 정의 롤(user roles)로 나뉜다.
+
+
+사전 정의된 롤
+CONNECT 롤
+사용자가 데이터베이스에 접속하는 데 필요한 CREATE SESSON 권한을 가지고 있다.
+
+RESOURCE 롤
+사용자가 테이블, 시퀀스를 비롯한 여러 객체를 생성할 수 있는 기본 시스템 권한을 묶어 놓은 롤이다.
+
+보통 새로운 사용자를 생성하면 CONNECT 롤과 RESOURCE 롤을 부여하는 경우가 많다. CONNECT 롤에서 CREATE VIEW 권한과 CREATE SYNONYM 권한이 제외되었기 때문에 뷰와 동의어 생성 권한을 사용자에게 부여하려면 이 두 권한을 따로 부여해 주어야 한다.
+
+DBA 롤
+데이터베이스를 관리하는 시스템 권한을 대부분 가지고 있다.
+
+
+사용자 정의 롤
+사용자 정의 롤은 필요에 의해 직접 권한을 포함시킨 롤을 뜻한다. 다음 절차를 따라 롤을 생성해서 사용할 수 있다.
+
+1. CREATE ROLE 문으로 롤을 생성한다.
+2. GRANT 명령어로 생성한 롤에 권한을 포함시킨다.
+3. GRANT 명령어로 권한이 포함된 롤을 특정 사용자에게 부여한다.
+4. REVOKE 명령어로 롤을 취소시킨다.
+
+
+롤 생성과 권한 포함
+
+롤을 생성하려면 데이터 관리 권한이 있는 사용자가 필요하다.
+
+CREATE ROLE ROLESTUDY;
+
+GRANT CONNECT, RESOURCE, CREATE VIEW, CREATE SYNONYM
+   TO RELESTUDY;
+
+GRANT ROLESTUDY TO ORCLSTUDY;
+
+
+부여된 롤과 권한 확인 
+
+사용자에 현재 부여된 권한과 롤을 확인하려면 USER_SS_PRIVS, USER_ROLE_PRIVS 데이터 사전을 사용하면 된다.
+
+
+부여된 롤 취소
+GRANT 명령어로 부여한 ROLE을 취소할 때 REVOKE를 사용한다.
+
+REVOKE ROLESTUDY FROM ORCLSTUDY;
+
+
+롤 삭제
+롤 삭제는 DROP 명령어를 사용한다. 롤을 삭제하면 해당 롤을 부여받은 모든 사용자의 롤이 취소된다.
+
+데이터베이스 관리 업무를 담당하지 않는다면 이 장의 내용은 업무에서 사용해야 하는 경우가 별로 없다. 이후 좀 더 깊이 있는 내용이 필요할 때 공식문서 참조할 것.
+
+
+
+
+

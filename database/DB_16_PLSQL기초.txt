@@ -1,0 +1,157 @@
+PL/SQL 구조
+
+블록이란?
+
+PL/SQL은 데이터베이스 관련 특정 작업을 수행하는 명령어와 실행에 필요한 여러 요소를 정의하는 명령어 등으로 구성되며, 이러한 명령어를 모아 둔 PL/SQL 프로그램의 기본 단위를 블록이라고 한다.
+
+
+DECLARE: 실행에 사용할 변수, 상수, 커서등을 선언
+BEGIN: 조건문, 반복문, SELECT, DML, 함수 등을 정의
+EXCEPTION: PL/SQL 실행 도중 발생하는 오류를 해결하는 문장 기술
+END: 블록의 마지막
+
+[DECLARE
+  실행에 필요한 여러 요소 선언;]
+BEGIN
+  작업을 위해 실제 실행하는 명령어;
+[EXCEPTION
+  PL/SQL수행 도중 발생하는 오류 처리;]
+END;
+
+필요에 따라 PL/SQL 블록 안에 다른 블록을 포함할 수도 있다.
+
+
+PL/SQL 실행 결과를 화면에 출력하기 위해 SERVEROUTPUT 환경 변수 값을 ON으로 변경해 주어야 한다.
+
+SET SERVEROUTPUT ON;
+
+
+블록을 구분할 때는 /으로 구분한다.
+
+PL/SQL문을 작성하고 실행하기 위해 다음 사항을 기억해라.
+1. PL/SQL 블록을 구성하는 DECLARE, BEGIN, EXCEPTION 키워드에는 세미콜론을 사용하지 않는다.
+2. PL/SQL 블록의 각 부분에서 실행해야 하는 문장 끝에는 세미콜론을 사용한다.
+3. PL/SQL문 내부에서 한 줄 주석(--)과 여러 줄 주석(/**/)을 사용할 수 있다.
+4. PL/SQL문 작성을 마치고 실행하기 위해 마지막에 슬래시를 사용한다.
+
+
+접속 계정이 변경되거나 접속이 끊어진 후 다시 실행하여 접속한다면 SET SERVEROUTPUT ON을 반드시 다시 실행해 주어야 PL/SQL 결과를 확인할 수 있다.
+
+
+PL/SQL에서 여러 명령어를 모아 둔 프로그램의 기본 단위를 블록이라고 한다. 기본 PL/SQL 블록은 실행에 사용할 변수, 상수, 커서등을 선언하는 DECLARE와 조건문, 반복문, SELECT, DML 함수등 실제 수행할 기능부를 정의하는 BEGIN, 그리고 PL/SQL으로 제작한 프로그램의 실행 도중 발생하는 오류를 처리하는 EXCEPTION과 블록을 닫는 END로 구성된다.
+
+
+
+
+변수와 상수
+
+선언부에서 작성한 변수는 실행부(BEGIN)에서 활용한다.
+
+변수이름 자료형 [:= 값 또는 값이 도출되는 여러 표현식];
+
+
+
+상수 정의하기
+한번 저장한 값이 프로그램이 종료될 때까지 유지되는 저장 요소이다.
+
+
+변수이름 CONSTANT 자료형 := 값 또는 값을 도출하는 여러 표현식;
+
+
+DECLARE
+    V_TAX CONSTANT NUMBER(1) := 6;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('V_TEX : ' || V_TAX);
+END;
+
+
+변수의 기본값 지정하기
+
+변수이름 자료형 DEFAULT 값 또는 도출되는 여러 표현식;
+
+DECLARE
+    V_DEPTNO NUMBER(2) DEFAULT 10;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(V_DEPTNO);
+END;
+/
+
+
+변수에 NULL 값 저장 막기
+특정 변수에 NULL이 저장되지 않게 하려면 NOT NULL 키워드를 사용한다. PL/SQL에서 선언한 변수는 특정 값을 할당하지 않으면 NULL값이 기본으로 할당된다. 이러한 이유로 NOT NULL 키워드를 사용한 변수는 반드시 선언과 동시에 특정 값을 지정해 주어야 한다.
+
+변수이름 자료형 NOT NULL :=/DEFAULT 값 또는 값이 도출되는 여러 표현식;
+
+DECLARE
+	V_DEPTNO NUMBER(2) NOT NULL := 10;
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('V_DEPTNO : ' || V_DEPTNO); 
+END;
+/
+
+
+변수 이름 정하기
+변수를 포함한 PL/SQL문에서 지정하는 객체 이름을 식별자(identifier)라고 한다. 식별자에 이름을 붙이는 규칙은 다음과 같다.
+1.같은 블록 안에서 식별자는 고유해야 하며 중복될 수 없다.
+2.대,소문자를 구별하지 않는다.
+3.테이블 이름 붙이는 규칙과 같은 규칙을 따른다.
+  -1. 이름은 문자로 시작해야 한다. 한글도 가능, 숫자로 시작하면 안됨
+  -2. 이름은 30byte이하여야 한다.
+  -3. 이름은 영문자, 한글, 숫자, $,#,_을 사용할 수 있다.
+  -4. SQL 키워드는 테이블 이름으로 사용할 수 없다.
+
+
+변수의 자료형
+스칼라(scalar), 복합(composite), 참조(reference), LOB(Large OBject)로 구분된다.
+
+
+스칼라형(scalar type)
+스칼라형은 숫자, 문자열, 날짜 등과 같이 오라클에서 기본으로 정의해 놓은 자료형으로 내부 구성 요소가 없는 단일 값을 의미한다.
+스칼라형은 숫자, 문자열, 날짜, 논리데이터로 나뉜다.
+
+NUMBER: 소수점을 포함할 수 있는 최대 38자리 숫자 데이터
+CHAR: 고정 길이 문자열 데이터
+VARCHAR2: 가변 길이 문자여 ㄹ데이터
+DATE: 날짜 데이터
+BOOLEAN: PL/SQL에서만 사용할 수 있는 논리 자료형 TRUE, FALSE, NULL을 포함
+
+
+참조형(reference type)
+오라클 데이터베이스에 존재하는 특정 테이블 열의 자료형이나 하나의 행 구조를 참조하는 자료형이다. 열을 참조할 때는 %TYPE, 행을 참조할 때는 %ROWTYPE을 사용한다. %TYPE으로 선언한 변수는 지정한 테이블 열과 완전히 같은 자료형이 된다.
+
+변수이름 테이블이름.열이름%TYPE;
+
+DECLARE
+  V_DEPTNO DEPT.DEPTNO%TYPE := 50;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('V_DEPTNO : ' || V_DEPTNO);
+END;
+/
+
+특정 테이블에서 하나의 열이 아닌 행 구조 전체를 참조할 때 %ROWTYPE을 사용한다.
+
+DECLARE
+  V_DEPT_ROW DEPT%ROWTYPE;
+BEGIN
+  SELECT DEPTNO, DNAME, LOC INTO V_DEPT_ROW
+    FROM DEPT
+   WHERE DEPTNO = 40;
+  DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || V_DEPT_ROW.DEPTNO);
+  DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+  DBMS_OUTPUT.PUT_LINE('LOC : ' || V_DEPT_ROW.LOC);
+END;
+/
+
+
+복합형, LOB형
+복합형은 여러 종류 및 개수의 데이터를 저장하기 위해 사용자가 직접 정의하는 자료형으로 컬렉션, 레코드로 구분된다.
+
+컬렉션(collection): TABLE 자료형이다. 한 가지 자료형의 데이터를 여러 개 저장, 테이블의 열과 유사하다.
+
+레코드(record): RECORD자료형이다. 여러 종류 자료형의 데이터를 저장, 테이블의 행과 유사하다.
+
+Large OBject를 의미하는 LOB형은 대용량의 텍스트, 이미지, 동영상, 사운드 데이터 등 대용량 데이터를 저장하기 위한 자료형으로 대표적으로 BLOB, CLOB등이 있다. 공식문서 참조
+
+
+PL/SQL에서 많이 사용하는 자료형은 숫자, 문자열, 날짜 등과 같이 오라클 데이터베이스에서 기본으로 정의해 둔 단일 값을 저장하는 스칼라형이 있다. 참조형은 오라클 데이터베이스에 존재하는 특정 테이블 열의 자료형이나 하나의 행 구조를 참고하는 자료형이다.
+
