@@ -138,7 +138,7 @@ CREATE TABLE EMPS
 --랜덤수 뽑기
 
 DECLARE
-    --DBMS_RANDO.VALUE()는 0~10미만 랜덤 실수
+    --DBMS_RANDOM.VALUE()는 0~10미만 랜덤 실수
     V_NUM NUMBER := ROUND(DBMS_RANDOM.VALUE(0, 10));
     -- 0~10까지 랜덤수
 
@@ -228,10 +228,12 @@ END;
 /
 
 -- CONTINUE문
+-- EXIT문
 BEGIN
     FOR I IN 1..9
     LOOP
         CONTINUE WHEN I = 5;
+	EXIT WHEN I = 7;
         DBMS_OUTPUT.PUT_LINE(I);
     END LOOP;
 END;

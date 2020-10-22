@@ -1,0 +1,76 @@
+자료형이 다른 여러 데이터를 저장하는 레코드
+
+레코드는 자료형이 각기 다른 데이터를 하나의 변수에 저장하는 데 사용한다.
+
+TYPE 레코드이름 IS RECORD(
+  변수이름 자료형 [NOT NULL] [:= 값 또는 값이 도출되는 여러 표현식][,
+  변수이름 자료형 [NOT NULL] [:= 값 또는 값이 도출되는 여러 표현식]]
+);
+
+
+
+DECLARE
+  TYPE REC_DEPT IS RECORD(
+    DEPTNO NUMBER(2) NOT NULL := 99,
+    DNAME DEPT.DNAME%TYPE,
+    LOC DEPT.LOC%TYPE
+  );
+  DEPT_REC REC_DEPT;
+BEGIN
+  DEPT_REC.DEPTNO := 99;
+  DEPT_REC.DNAME := 'DATABASE';
+  DEPT_REC.LOC := 'SEOUL';
+END;
+/
+
+
+레코드를 사용한 INSERT
+
+DECLARE
+  TYPE REC_DEPT IS RECORD(
+	DEPTNO NUMBER(2) NOT NULL := 99;
+	DNAME DEPT.DNAME%TYPE,
+	LOC DEPT.LOC%TYPE
+  );
+  DEPT_REC REC_DEPT;
+NEGIN
+  DEPT_REC.DEPTNO := 99;
+  DEPT_REC.DNAME := 'DATABASE';
+  DEPT_REC.LOC := 'SEOUL';
+
+  INSERT INTO DEPT_RECORD
+  VALUES DEPT_REC
+END;
+/
+
+
+레코드를 사용한 UPDATE
+레코드는 UPDATE문에도 사용할 수 있다. 이 경우에 SET절은 ROW 키워드와 함께 레코드 이름을 명시한다.
+
+DECALRE
+  TYPE REC_DEPT IS RECORD(
+    DEPTNO NUMBER(2) NOT NULL := 99,
+    DANEM DEPT.DNAME%TYPE,
+    LOC DEPT.LOC%TYPE
+  );
+  DEPT_REC REC_DEPT;
+BEGIN
+  DEPT_REC.DEPTNO := 50;
+  DEPT_REC.DNAME := 'DB';
+  DEPT_REC.LOC = 'SEOUL';
+
+  UPDATE DEPT_RECORD
+  SET ROW = DEPT_REC
+  WHERE DEPTNO = 99;
+END;
+/
+
+
+레코드를 포함하는 레코드
+레코드에 포함된 변수의 자료형을 지정할 때 다른 레코드를 지정할 수도 있다. 변수에 레코드형을 적용했으므로 두 개의 마침표로 값을 사용하고 있는 것을 눈여겨보자. 이렇게 레코드 안에 또 다른 레코드를 포함한 형태를 중첩 레코드(Nested Record)라고 한다.
+
+DECLARE
+  TYPE REC_DEPT IS
+
+
+

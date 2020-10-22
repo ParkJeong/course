@@ -155,3 +155,198 @@ Large OBject를 의미하는 LOB형은 대용량의 텍스트, 이미지, 동영
 
 PL/SQL에서 많이 사용하는 자료형은 숫자, 문자열, 날짜 등과 같이 오라클 데이터베이스에서 기본으로 정의해 둔 단일 값을 저장하는 스칼라형이 있다. 참조형은 오라클 데이터베이스에 존재하는 특정 테이블 열의 자료형이나 하나의 행 구조를 참고하는 자료형이다.
 
+
+
+
+조건 제어문
+
+
+IF 조건문
+
+IF 조건식1 THEN
+  수행할 명령어1;
+[ELSIF 조건식2 THEN
+  수행할 명령어2;
+ELSIF 조건식3 THEN
+  수행할 명령어3;
+...
+ELSIF 조건식N THEN
+  수행할 명령어N;]
+[ELSE
+  수행할 명렁어N+1;]
+END IF;
+
+
+DECLARE
+  V_SCORE NUMBER := 87;
+BEGIN
+  IF V_SCORE >= 90 THEN
+    DBMS_OUTPUT.PUT_LINE('A학점');
+  ELSIF V_SCORE >= 80 THEN
+    DBMS_OUTPUT.PUT_LINE('B학점');
+  ELSIF V_SCORE >= 70 THEN
+    DBMS_OUTPUT.PUT_LINE('C학점');
+  ELSIF V_SCORE >= 60 THEN
+    DBMS_OUTPUT.PUT_LINE('D학점');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('F학점');
+  END IF;
+END;
+/
+
+
+CASE 조건문
+
+CASE 조건문은 두 가지 방식을 사용한다.
+단순 CASE문: 비교 기준이 되는 조건의 값이 여러 가지일 때 해당 값만 명시하여 작업 수행
+검색 CASE문: 특정한 비교 기준 없이 여러 조건식을 나열하여 조건식에 맞는 작업 수행
+
+
+단순 CASE
+CASE 비교기준
+  WHEN 값1 THEN
+    수행할 명령어1;
+  WHEN 값2 THEN
+    수행할 명령어2;
+  ...
+  WHEN 값N THEN
+    수행할 명령어N;
+  ELSE
+    수행할 명령어N+1;
+END CASE;
+
+
+DECLARE
+  V_SCORE NUMBER := 87;
+BEGIN
+  CASE TRUNC(V_SCORE/10)
+    WHEN 10 THEN DBMS_OUTPUT.PUT_LINE('A학점');
+    WHEN 9  THEN DBMS_OUTPUT.PUT_LINE('A학점');
+    WHEN 8  THEN DBMS_OUTPUT.PUT_LINE('B학점');
+    WHEN 7  THEN DBMS_OUTPUT.PUT_LINE('C학점');
+    WHEN 6  THEN DBMS_OUTPUT.PUT_LINE('D학점');
+    ELSE DBMS_OUTPUT.PUT_LINE('F학점');
+  END CASE;
+END;
+/
+
+
+검색 CASE
+CASE
+  WHEN 조건식1 THEN
+    수행할 명령어1;
+  WHEN 조건식2 THEN
+    수행할 명령어2;
+  ...
+  WHEN 조건식N THEN
+    수행할 명령어N;
+  ELSE
+    수행할 명령어N+1;
+END CASE;
+
+
+DECLARE
+  V_SCORE NUMBER := 87;
+BEGIN
+  CASE
+    WHEN V_SCORE >= 90 THEN DBMS_OUTPUT.PUT_LINE('A학점');
+    WHEN V_SCORE >= 80 THEN DBMS_OUTPUT.PUT_LINE('B학점');
+    WHEN V_SCORE >= 70 THEN DBMS_OUTPUT.PUT_LINE('C학점');
+    WHEN V_SCORE >= 60 THEN DBMS_OUTPUT.PUT_LINE('D학점');
+    ELSE DBMS_OUTPUT.PUT_LINE('F학점');
+  END CASE;
+END;
+/
+
+RETURN; 키워드를 이용하면 PROCEDURE가 그 자리에서 끝난다.
+
+
+
+
+반복 제어문
+
+
+기본 LOOP:	기본 반복문
+WHILE LOOP:	특정 조건식의 결과를 통해 반복 수행
+FOR LOOP:	반복 횟수를 정하여 반복 수행
+CUSOR FOR LOOP: 커서를 활용한 반복 수행
+
+EXIT:		수행 중인 반복 종료
+EXIT-WHEN:	반복 종료를 위한 조건식을 지정하고 만족하면 반복 종료
+CONTINUE:	수행 중인 반복의 현재 주기를 건너뜀
+CONTINUE-WHEN:: 특정 조건식을 지정하고 조건식을 만족하면 현재 반복 주기를 건너뜀
+
+
+기본 LOOP
+반복을 위한 별다른 조건 없이 반복할 작업 내용을 지정
+기본 LOOP문은 반복의 종료 시점이나 조건식을 따로 명시하지 않으므로 지정한 작업을 무한히 반복 수행한다.
+LOOP
+  반복 수행 작업;
+END LOOP;
+
+
+DECLARE
+  V_NUM NUMBER := 0;
+BEGIN
+  LOOP
+    V_NUM := V_NUM + 1;
+    EXIT WHEN V_NUM > 4;
+  END LOOP;
+END;
+/
+
+
+WHILE LOOP
+
+WHILE 조건식 LOOP
+  반복 수행 작업;
+END LOOP;
+
+
+DECLARE
+  V_NUM NUMBER := 0;
+BEGIN
+  WHILE V_NUM < 4 LOOP
+    V_NUM := V_NUM + 1;
+  END LOOP;
+END;
+/
+
+
+FOR LOOP
+지정한 시작 값부터 1씩 증가하여 종료 값에 이를 때까지 작업을 반복 수행한다. FOR 키워드 다음에 작성한 I는 반복 수행 중의 시작 값과 종료 값 사이의 현재 숫자가 저장되는 특수한 변수로 카운터라고 한다. 카운터는 선언부에서 정의하지 않고 FOR LOOP문에서 바로 정의하여 사용한다. 값을 임의로 할당할 수 없고 현재 저장되어 있는 값을 참조만 할 수 있다.
+
+FOR i IN 시작값..종료값 LOOP
+  반복 수행 작업;
+END LOOP;
+
+
+BEGIN
+  FOR i IN 0..4 LOOP
+    DBMS_OUTPUT.PUT_LINE(i);
+  END LOOP;
+END;
+/
+
+시작 값에서 종료 값을 역순으로 반복하고 싶다면 다음과 같이 REVERSE 키워드를 사용한다. 하지만 FOR LOOP문에 사용하는 시작 값과 종료 값의 위치는 변하지 않는다.
+FOR i IN REVERSE 시작값..종료값 LOOP
+  반복 수행 작업;
+END LOOP;
+
+BEGIN
+  FOR i IN REVERSE 0..4 LOOP
+    DBMS.OUTPUT.PUT_LINE(i);
+  END LOOP;
+END;
+/
+
+
+CONTINUE문, CONTINUE-WHEN문
+
+BEGIN
+  FOR i IN 0..4 LOOP
+    CONTINUE WHEN MOD(i, 2) = 1;
+  END LOOP;
+END;
+/
+
